@@ -1,0 +1,157 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/header_logo"
+            android:layout_width="40dp"
+            android:layout_height="60dp"
+            android:src="@drawable/konnect_logo" />
+
+        <TextView
+            android:id="@+id/header_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:text="Feed Page"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- Body -->
+    <LinearLayout
+        android:id="@+id/body_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Feed Section -->
+        <LinearLayout
+            android:id="@+id/feed_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/grau_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grau"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/search_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pesquise" />
+
+            <EditText
+                android:id="@+id/content_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="O que está pensando?" />
+
+            <Button
+                android:id="@+id/post_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple"
+                android:text="Postar" />
+
+            <LinearLayout
+                android:id="@+id/feed_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:id="@+id/users_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Groups Section -->
+        <LinearLayout
+            android:id="@+id/groups_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/groups_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grupos"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- Notifications Section -->
+        <LinearLayout
+            android:id="@+id/notifications_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/notifications_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notificações"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Navbar/Footer -->
+    <LinearLayout
+        android:id="@+id/navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/purple">
+
+        <Button
+            android:id="@+id/nav_feed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Feed"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/nav_groups"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Grupos"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/nav_notifications"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Notificações"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:textStyle="normal" />
+    </LinearLayout>
+</LinearLayout>
