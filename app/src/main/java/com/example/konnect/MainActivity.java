@@ -25,11 +25,21 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Button to navigate to FeedActivity
         Button enterButton = findViewById(R.id.button);
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FeedActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button createAccountButton = findViewById(R.id.button2);
+        createAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });

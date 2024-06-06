@@ -5,10 +5,13 @@
 
     <!-- Header -->
     <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true">
 
         <ImageView
             android:id="@+id/header_logo"
@@ -16,14 +19,27 @@
             android:layout_height="60dp"
             android:src="@drawable/konnect_logo" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
         <TextView
             android:id="@+id/header_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:text="Feed Page"
+            android:text="Username"
+            android:paddingRight="8dp"
             android:textSize="18sp" />
+
+        <ImageButton
+            android:id="@+id/header_home_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/konnect_bell"
+            android:background="@null"
+            android:backgroundTint="@color/purple"
+            android:contentDescription="Home" />
     </LinearLayout>
 
     <!-- Body -->
@@ -43,12 +59,30 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <TextView
-                android:id="@+id/grau_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Grau"
-                android:textSize="18sp" />
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/grau_min_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Grau Mínimo"
+                    android:contentDescription="Grau Mínimo"
+                    android:textColor="@color/purple" />
+
+                <Button
+                    android:id="@+id/grau_max_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Grau Máximo"
+                    android:contentDescription="Grau Máximo"
+                    android:textColor="@color/purple" />
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/search_input"
