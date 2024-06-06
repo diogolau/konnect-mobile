@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/blue_white">
 
     <!-- Header -->
     <LinearLayout
@@ -33,7 +34,8 @@
             android:id="@+id/register_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Seja bem-vindo ao Konnect"
+            android:text="@string/text_welcome"
+            android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -41,7 +43,7 @@
             android:id="@+id/register_subheading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Crie conexões reais"
+            android:text="@string/text_welcome_subtitle"
             android:textColor="@color/purple"
             android:textSize="16sp" />
 
@@ -54,25 +56,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username" />
+                android:text="@string/label_username" />
 
             <EditText
                 android:id="@+id/username_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="kool_username" />
+                android:hint="@string/placeholder_username" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
-                android:text="Password" />
+                android:text="@string/label_password" />
 
             <EditText
                 android:id="@+id/password_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="******"
+                android:hint="@string/placeholder_password"
                 android:inputType="textPassword" />
         </LinearLayout>
 
@@ -90,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/purple"
-                android:text="Confirmar" />
+                android:text="@string/button_confirm" />
         </LinearLayout>
     </LinearLayout>
 
@@ -108,14 +110,15 @@
             android:id="@+id/footer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Não tem uma conta?" />
+            android:text="@string/text_no_account"
+            android:textColor="@color/gray"/>
 
         <Button
             android:id="@+id/button_saiba_mais"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:text="Criar conta"
+            android:text="@string/button_register"
             android:textColor="@color/purple" />
     </LinearLayout>
 </RelativeLayout>

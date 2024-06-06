@@ -1,9 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_white"
-    >
+    android:background="@color/blue_white">
 
     <!-- Header -->
     <LinearLayout
@@ -20,18 +18,6 @@
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:src="@drawable/konnect_logo" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/header_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Register Page"
-            android:textSize="18sp" />
     </LinearLayout>
 
     <!-- Body -->
@@ -48,16 +34,15 @@
             android:id="@+id/register_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_register"
+            android:text="Seja bem-vindo ao Konnect"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/register_subheading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_register_subtitle"
+            android:text="Crie conexões reais"
             android:textColor="@color/purple"
             android:textSize="16sp" />
 
@@ -70,25 +55,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_username" />
+                android:text="Username" />
 
             <EditText
                 android:id="@+id/username_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/placeholder_username"/>
+                android:hint="kool_username" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
-                android:text="@string/label_password" />
+                android:text="Password" />
 
             <EditText
                 android:id="@+id/password_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/placeholder_password"
+                android:hint="******"
                 android:inputType="textPassword" />
         </LinearLayout>
 
@@ -99,13 +84,6 @@
             android:paddingHorizontal="8dp"
             android:paddingTop="16dp">
 
-            <Button
-                android:id="@+id/button_back"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="@color/purple"
-                android:text="@string/button_back" />
 
             <Button
                 android:id="@+id/button_confirm"
@@ -113,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/purple"
-                android:text="@string/button_confirm" />
+                android:text="Confirmar" />
         </LinearLayout>
     </LinearLayout>
 
@@ -131,14 +109,16 @@
             android:id="@+id/footer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_interested" />
+            android:text="@string/text_no_account"
+            android:textColor="@color/gray"/>
 
         <Button
             android:id="@+id/button_saiba_mais"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:text="@string/button_about_us"
+            android:text="@string/button_register"
+            android:textFontWeight="@integer/material_motion_duration_long_1"
             android:textColor="@color/purple" />
     </LinearLayout>
 </RelativeLayout>

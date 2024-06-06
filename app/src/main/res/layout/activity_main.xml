@@ -2,7 +2,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/blue_white">
 
     <!-- Header -->
     <LinearLayout
@@ -89,8 +90,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:padding="16dp"
-        android:layout_alignParentBottom="true">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/footer_text"
