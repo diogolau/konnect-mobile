@@ -19,4 +19,7 @@
     <string name="button_back">Voltar</string>
     <string name="text_interested">Ficou interessado?</string>
     <string name="button_about_us">Saiba mais sobre nós</string>
+    <string name="my_post">Blá blá blá</string>
+    <string name="text_search">Pesquise</string>
+    <string name="text_placeholder_post">O que está pensando?</string>
 </resources>

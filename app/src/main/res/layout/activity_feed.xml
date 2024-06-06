@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -29,7 +30,7 @@
             android:id="@+id/header_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:text="Diogo Laurindo"
             android:paddingEnd="8dp"
             android:textSize="18sp"
             android:textColor="@color/gray" />
@@ -38,119 +39,145 @@
             android:id="@+id/header_home_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/konnect_bell"
+            android:src="@drawable/konnect_exit"
             android:background="@null"
-            android:backgroundTint="@color/purple"
+            android:backgroundTint="@color/blue"
             android:contentDescription="Home" />
     </LinearLayout>
 
-    <!-- Body -->
-    <LinearLayout
-        android:id="@+id/body_container"
+    <!-- Scrollable Body -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Feed Section -->
         <LinearLayout
-            android:id="@+id/feed_section"
+            android:id="@+id/body_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible">
+            android:orientation="vertical">
 
+            <!-- Feed Section -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal">
-
-                <Button
-                    android:id="@+id/grau_min_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:text="Grau Mínimo"
-                    android:contentDescription="Grau Mínimo"
-                    android:textColor="@color/purple" />
-
-                <Button
-                    android:id="@+id/grau_max_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:text="Grau Máximo"
-                    android:contentDescription="Grau Máximo"
-                    android:textColor="@color/purple" />
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/search_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Pesquise" />
-
-            <EditText
-                android:id="@+id/content_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="O que está pensando?" />
-
-            <Button
-                android:id="@+id/post_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/purple"
-                android:text="Postar" />
-
-            <LinearLayout
-                android:id="@+id/feed_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
-            <LinearLayout
-                android:id="@+id/users_container"
+                android:id="@+id/feed_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone" />
-        </LinearLayout>
+                android:visibility="visible">
 
-        <!-- Groups Section -->
-        <LinearLayout
-            android:id="@+id/groups_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal">
 
-            <TextView
-                android:id="@+id/groups_text"
-                android:layout_width="wrap_content"
+                    <Button
+                        android:id="@+id/grau_min_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="Grau Mínimo"
+                        android:contentDescription="Grau Mínimo"
+                        android:textColor="@color/blue" />
+
+                    <Button
+                        android:id="@+id/grau_max_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="Grau Máximo"
+                        android:contentDescription="Grau Máximo"
+                        android:textColor="@color/blue" />
+                </LinearLayout>
+
+                <!--Search Bar-->
+                <EditText
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/text_search"
+                    android:padding="16dp"
+                    android:background="@drawable/rounded_border"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:inputType="text"/>
+
+                <!--Create post-->
+                <EditText
+                    android:id="@+id/content_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/text_placeholder_post"
+                    android:padding="16dp"
+                    android:background="@drawable/rounded_border"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:inputType="text"/>
+
+                <Button
+                    android:id="@+id/post_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/blue"
+                    android:text="Postar" />
+
+                <!-- Post List -->
+                <LinearLayout
+                    android:id="@+id/feed_list_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp">
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/feed_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/users_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Groups Section -->
+            <LinearLayout
+                android:id="@+id/groups_section"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Grupos"
-                android:textSize="18sp" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:visibility="gone">
 
-        <!-- Notifications Section -->
-        <LinearLayout
-            android:id="@+id/notifications_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+                <TextView
+                    android:id="@+id/groups_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grupos"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/notifications_text"
-                android:layout_width="wrap_content"
+            <!-- Notifications Section -->
+            <LinearLayout
+                android:id="@+id/notifications_section"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Notificações"
-                android:textSize="18sp" />
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/notifications_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notificações"
+                    android:textSize="18sp" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
     <!-- Navbar/Footer -->
     <LinearLayout
@@ -158,7 +185,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/purple">
+        android:background="@color/blue">
 
         <Button
             android:id="@+id/nav_feed"
