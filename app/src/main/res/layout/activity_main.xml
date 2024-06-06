@@ -1,125 +1,109 @@
-<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
+    <!-- Header -->
     <LinearLayout
         android:id="@+id/text_ctn"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/button3"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="@string/button_about"
+            android:textColor="@color/gray" />
+
+        <Button
+            android:id="@+id/button4"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="@string/button_repo"
+            android:textColor="@color/gray"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/welcome_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="89dp"
-        android:layout_y="365dp"
-        android:text="CONECTANDO TODOS OS GRUPOS"
-        android:textSize="16sp" />
-
+    <!-- Body -->
     <LinearLayout
-        android:id="@+id/img_ctn"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/home_image"
+            android:layout_width="166dp"
+            android:layout_height="234dp"
+            android:layout_x="131dp"
+            android:layout_y="86dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/konnect_logo"/>
+
+        <TextView
+            android:id="@+id/welcome_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/home_title"
+            android:textColor="@color/gray"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/home_text"
+            android:textColor="@color/black"
+            android:textSize="32sp" />
+
+        <ImageView
+            android:id="@+id/home_line"
+            android:layout_width="146dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/konnect_home_line" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/purple"
+            android:text="@string/button_login" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/home_bg"
-        android:layout_width="146dp"
-        android:layout_height="198dp"
-        android:layout_x="142dp"
-        android:layout_y="113dp"
-        android:shadowColor="@android:color/darker_gray"
-        android:shadowRadius="4"
-        android:src="@drawable/konnect_logo_bg" />
-
-    <ImageView
-        android:id="@+id/home_image"
-        android:layout_width="166dp"
-        android:layout_height="234dp"
-        android:layout_x="131dp"
-        android:layout_y="86dp"
-        android:src="@drawable/konnect_logo" />
-
-    <ImageView
-        android:id="@+id/home_line"
-        android:layout_width="146dp"
-        android:layout_height="198dp"
-        android:layout_x="141dp"
-        android:layout_y="382dp"
-        android:src="@drawable/konnect_home_line" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
+    <!-- Footer -->
+    <LinearLayout
+        android:id="@+id/footer_main"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_x="165dp"
-        android:layout_y="534dp"
-        android:backgroundTint="@color/purple"
-        android:text="Entrar" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_alignParentBottom="true">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="119dp"
-        android:layout_y="403dp"
-        android:text="A rede social"
-        android:textSize="32sp" />
+        <TextView
+            android:id="@+id/footer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_no_account" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="135dp"
-        android:layout_y="436dp"
-        android:text="verdadeira"
-        android:textSize="32sp" />
-
-    <Button
-        android:id="@+id/button2"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="188dp"
-        android:layout_y="589dp"
-        android:background="@android:color/transparent"
-        android:text="Criar conta"
-        android:textColor="@android:color/black" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="108dp"
-        android:layout_y="603dp"
-        android:text="Não tem conta?" />
-
-    <Button
-        android:id="@+id/button3"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="93dp"
-        android:layout_y="22dp"
-        android:background="@android:color/transparent"
-        android:text="Sobre"
-        android:textColor="@android:color/black" />
-
-    <Button
-        android:id="@+id/button4"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="194dp"
-        android:layout_y="20dp"
-        android:background="@android:color/transparent"
-        android:text="Repositório"
-        android:textColor="@android:color/black" />
-</AbsoluteLayout>
+        <Button
+            android:id="@+id/button_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="@string/button_register"
+            android:textColor="@color/purple" />
+    </LinearLayout>
+</LinearLayout>

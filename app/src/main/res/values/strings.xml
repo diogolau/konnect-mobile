@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">konnect</string>
+    <string name="home_title">CONECTANDO TODOS OS GRUPOS</string>
+    <string name="home_text">A rede social verdadeira</string>
+    <string name="button_login">Entrar</string>
+    <string name="button_about">Sobre</string>
+    <string name="button_repo">Repositório</string>
+    <string name="text_no_account">Não tem conta?</string>
+    <string name="button_register">Criar conta</string>
 </resources>
