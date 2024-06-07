@@ -1,25 +1,27 @@
 package com.example.konnect;
 
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 public class FeedActivity extends AppCompatActivity {
 
     private Button navFeed, navGroups, navNotifications;
-    private LinearLayout feedSection, groupsSection, notificationsSection;
+    private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer;
     private ImageButton homeButton;
-    private Button postButton, grauMinButton, grauMaxButton;
+    private Button postButton;
     private EditText contentInput;
     private LinearLayout feedListContainer;
+    private ComponentHeader header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +35,8 @@ public class FeedActivity extends AppCompatActivity {
         postButton = findViewById(R.id.post_button);
         contentInput = findViewById(R.id.content_input);
         feedListContainer = findViewById(R.id.feed_list_container);
-        grauMinButton = findViewById(R.id.grau_min_button);
-        grauMaxButton = findViewById(R.id.grau_max_button);
+        grauButtonsContainer = findViewById(R.id.grau_buttons_container);
+        header = findViewById(R.id.header);
 
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
@@ -45,6 +47,8 @@ public class FeedActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setActiveTab(navFeed);
                 showSection(feedSection);
+                grauButtonsContainer.setVisibility(View.VISIBLE);
+                header.setGroupName(null);
             }
         });
 
@@ -67,7 +71,10 @@ public class FeedActivity extends AppCompatActivity {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish(); // Go back to the previous activity
+                Intent intent = new Intent(FeedActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -82,23 +89,45 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
-        grauMinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showNumberPickerDialog(grauMinButton, "Grau Mínimo");
-            }
-        });
-
-        grauMaxButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showNumberPickerDialog(grauMaxButton, "Grau Máximo");
-            }
-        });
-
         // Default to Feed tab
         setActiveTab(navFeed);
         showSection(feedSection);
+
+        findViewById(R.id.group_box_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFeedWithGroup("Shining Star");
+            }
+        });
+
+        findViewById(R.id.group_box_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFeedWithGroup("Beaty queens");
+            }
+        });
+
+        findViewById(R.id.group_box_3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFeedWithGroup("Angry uncles");
+            }
+        });
+
+        // Grau Minimo and Grau Maximo Buttons
+        findViewById(R.id.grau_min_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNumberPickerDialog((Button) v, "Grau Mínimo");
+            }
+        });
+
+        findViewById(R.id.grau_max_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNumberPickerDialog((Button) v, "Grau Máximo");
+            }
+        });
     }
 
     private void setActiveTab(Button activeButton) {
@@ -138,21 +167,21 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayout likeDislikeLayout = new LinearLayout(this);
         likeDislikeLayout.setOrientation(LinearLayout.HORIZONTAL);
         likeDislikeLayout.setPadding(0, 16, 0, 0);
-        likeDislikeLayout.setGravity(android.view.Gravity.CENTER_VERTICAL); // Center align the layout
+        likeDislikeLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
 
         ImageView likeIcon = new ImageView(this);
         likeIcon.setImageResource(R.drawable.konnect_like);
         LinearLayout.LayoutParams iconLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        iconLayoutParams.setMargins(0, 0, 16, 0);
+        iconLayoutParams.setMargins(0, 0, 8, 0);
         likeIcon.setLayoutParams(iconLayoutParams);
 
         TextView likeCount = new TextView(this);
         likeCount.setText("4");
         likeCount.setTextSize(16);
-        likeCount.setTextColor(getResources().getColor(R.color.blue)); // Change to blue color
-        likeCount.setGravity(android.view.Gravity.CENTER_VERTICAL); // Center align the text
+        likeCount.setTextColor(getResources().getColor(R.color.blue));
+        likeCount.setLayoutParams(iconLayoutParams);
 
         ImageView dislikeIcon = new ImageView(this);
         dislikeIcon.setImageResource(R.drawable.konnect_dislike);
@@ -161,8 +190,8 @@ public class FeedActivity extends AppCompatActivity {
         TextView dislikeCount = new TextView(this);
         dislikeCount.setText("12");
         dislikeCount.setTextSize(16);
-        dislikeCount.setTextColor(getResources().getColor(R.color.blue)); // Change to blue color
-        dislikeCount.setGravity(android.view.Gravity.CENTER_VERTICAL); // Center align the text
+        dislikeCount.setTextColor(getResources().getColor(R.color.blue));
+        dislikeCount.setLayoutParams(iconLayoutParams);
 
         likeDislikeLayout.addView(likeIcon);
         likeDislikeLayout.addView(likeCount);
@@ -175,19 +204,29 @@ public class FeedActivity extends AppCompatActivity {
         feedListContainer.addView(newPost, 0); // Add the new post at the top of the list
     }
 
-    private void showNumberPickerDialog(Button button, String title) {
-        NumberPicker numberPicker = new NumberPicker(this);
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(10);
+    private void openFeedWithGroup(String groupName) {
+        setActiveTab(navFeed);
+        showSection(feedSection);
+        grauButtonsContainer.setVisibility(View.GONE);
+        header.setGroupName(groupName);
+    }
 
+    private void showNumberPickerDialog(final Button button, final String title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(numberPicker);
         builder.setTitle(title);
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            int value = numberPicker.getValue();
-            button.setText(title + ": " + value);
+
+        final String[] numbers = new String[11];
+        for (int i = 0; i <= 10; i++) {
+            numbers[i] = String.valueOf(i);
+        }
+
+        builder.setItems(numbers, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                button.setText(title + ": " + numbers[which]);
+            }
         });
-        builder.setNegativeButton("Cancel", null);
+
         builder.show();
     }
 }

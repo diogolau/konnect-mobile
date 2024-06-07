@@ -1,11 +1,9 @@
 package com.example.konnect;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,48 +12,40 @@ import androidx.annotation.Nullable;
 
 public class ComponentHeader extends LinearLayout {
 
+    private TextView headerText;
+    private TextView groupNameText;
+    private ImageButton exitButton;
+
     public ComponentHeader(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initializeViews(context, attrs);
+        init(context, attrs);
     }
 
-    private void initializeViews(Context context, AttributeSet attrs) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.component_header, this);
+    private void init(Context context, AttributeSet attrs) {
+        LayoutInflater.from(context).inflate(R.layout.component_header, this, true);
+
+        headerText = findViewById(R.id.header_text);
+        groupNameText = findViewById(R.id.group_name_text);
+        exitButton = findViewById(R.id.header_home_button);
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ComponentHeader, 0, 0);
 
-        String headerText;
-        boolean showExitButton;
-
         try {
-            headerText = a.getString(R.styleable.ComponentHeader_headerText);
-            showExitButton = a.getBoolean(R.styleable.ComponentHeader_showExitButton, false);
+            String headerTextString = a.getString(R.styleable.ComponentHeader_headerText);
+            boolean showExitButton = a.getBoolean(R.styleable.ComponentHeader_showExitButton, false);
+            headerText.setText(headerTextString);
+            exitButton.setVisibility(showExitButton ? VISIBLE : GONE);
         } finally {
             a.recycle();
         }
+    }
 
-        TextView textView = findViewById(R.id.header_text);
-        ImageButton exitButton = findViewById(R.id.header_home_button);
-
-        if (headerText != null) {
-            textView.setText(headerText);
-            textView.setVisibility(VISIBLE);
+    public void setGroupName(String groupName) {
+        if (groupName != null && !groupName.isEmpty()) {
+            groupNameText.setText(groupName);
+            groupNameText.setVisibility(VISIBLE);
         } else {
-            textView.setVisibility(GONE);
-        }
-
-        if (showExitButton) {
-            exitButton.setVisibility(VISIBLE);
-            exitButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, MainActivity.class);
-                    context.startActivity(intent);
-                }
-            });
-        } else {
-            exitButton.setVisibility(GONE);
+            groupNameText.setVisibility(GONE);
         }
     }
 }
