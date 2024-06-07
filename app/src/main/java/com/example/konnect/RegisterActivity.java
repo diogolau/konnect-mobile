@@ -4,24 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RegisterActivity extends AppCompatActivity {
+
+    private Button backButton;
+    private Button confirmButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        Button backButton = findViewById(R.id.button_back);
-        Button confirmButton = findViewById(R.id.button_confirm);
-        Button saibaMaisButton = findViewById(R.id.button_saiba_mais);
+        backButton = findViewById(R.id.button_back);
+        confirmButton = findViewById(R.id.button_confirm);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish(); // Go back to the previous activity
+                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // Finish current activity
             }
         });
 
@@ -30,13 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
-            }
-        });
-
-        saibaMaisButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle Saiba Mais click, navigate to About page or show information
+                finish(); // Finish current activity
             }
         });
     }
