@@ -7,6 +7,7 @@
 
     <!-- Header -->
     <com.example.konnect.ComponentHeader
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:headerText="Diogo Laurindo"
@@ -34,6 +35,7 @@
                 android:visibility="visible">
 
                 <LinearLayout
+                    android:id="@+id/grau_buttons_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -120,12 +122,124 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/groups_text"
-                    android:layout_width="wrap_content"
+                <!-- Group Box 1 -->
+                <LinearLayout
+                    android:id="@+id/group_box_1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Grupos"
-                    android:textSize="18sp" />
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="4dp"
+                    android:elevation="4dp"
+                    android:background="@drawable/rounded_border">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_gravity="start">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Shining Star"
+                            android:textSize="16sp"
+                            android:textColor="@color/black" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="25"
+                            android:textSize="16sp"
+                            android:textColor="@color/blue"
+                            android:gravity="center_vertical" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Group Box 2 -->
+                <LinearLayout
+                    android:id="@+id/group_box_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="8dp"
+                    android:elevation="4dp"
+                    android:background="@drawable/rounded_border">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="start">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Beaty queens"
+                            android:textSize="16sp"
+                            android:textColor="@color/black" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="32"
+                            android:textSize="16sp"
+                            android:textColor="@color/blue"
+                            android:gravity="center_vertical" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Group Box 3 -->
+                <LinearLayout
+                    android:id="@+id/group_box_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="8dp"
+                    android:elevation="4dp"
+                    android:background="@drawable/rounded_border">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_gravity="start">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Angry uncles"
+                            android:textSize="16sp"
+                            android:textColor="@color/black" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="19"
+                            android:textSize="16sp"
+                            android:textColor="@color/blue"
+                            android:gravity="center_vertical" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Notifications Section -->
@@ -162,14 +276,14 @@
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Aceitar"
-                            android:backgroundTint="@color/blue" />
+                            android:text="Rejeitar"
+                            android:backgroundTint="@color/red" />
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rejeitar"
-                            android:backgroundTint="@color/blue"
+                            android:text="Aceitar"
+                            android:backgroundTint="@color/green"
                             android:layout_marginStart="8dp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -200,14 +314,14 @@
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Aceitar"
-                            android:backgroundTint="@color/blue" />
+                            android:text="Rejeitar"
+                            android:backgroundTint="@color/red"/>
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rejeitar"
-                            android:backgroundTint="@color/blue"
+                            android:text="Aceitar"
+                            android:backgroundTint="@color/green"
                             android:layout_marginStart="8dp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -238,14 +352,14 @@
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Aceitar"
-                            android:backgroundTint="@color/blue" />
+                            android:text="Rejeitar"
+                            android:backgroundTint="@color/red" />
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rejeitar"
-                            android:backgroundTint="@color/blue"
+                            android:text="Aceitar"
+                            android:backgroundTint="@color/green"
                             android:layout_marginStart="8dp" />
                     </LinearLayout>
                 </LinearLayout>
