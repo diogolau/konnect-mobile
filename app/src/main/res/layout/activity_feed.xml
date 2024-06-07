@@ -1,51 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/blue_white"
-    tools:context=".FeedActivity">
+    android:background="@color/blue_white">
 
     <!-- Header -->
-    <LinearLayout
-        android:id="@+id/header"
+    <com.example.konnect.ComponentHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true">
-
-        <ImageView
-            android:id="@+id/header_logo"
-            android:layout_width="40dp"
-            android:layout_height="60dp"
-            android:src="@drawable/konnect_logo" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/header_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Diogo Laurindo"
-            android:paddingEnd="8dp"
-            android:textSize="18sp"
-            android:textColor="@color/gray" />
-
-        <ImageButton
-            android:id="@+id/header_home_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/konnect_exit"
-            android:background="@null"
-            android:backgroundTint="@color/blue"
-            android:contentDescription="Home" />
-    </LinearLayout>
+        app:headerText="Diogo Laurindo"
+        app:showExitButton="true" />
 
     <!-- Scrollable Body -->
     <ScrollView
@@ -171,19 +136,17 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <!-- Notification Boxes -->
+                <!-- Notification Box 1 -->
                 <LinearLayout
-                    android:id="@+id/notification_box_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp"
-                    android:layout_margin="8dp"
+                    android:layout_marginTop="0dp"
                     android:elevation="4dp"
                     android:background="@drawable/rounded_border">
 
                     <TextView
-                        android:id="@+id/notification_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Luiz Braga"
@@ -194,33 +157,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="end"
-                        android:layout_marginTop="8dp">
+                        android:gravity="end">
 
                         <Button
-                            android:id="@+id/accept_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/blue"
-                            android:text="Aceitar" />
+                            android:text="Aceitar"
+                            android:backgroundTint="@color/blue" />
 
                         <Button
-                            android:id="@+id/reject_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/blue"
                             android:text="Rejeitar"
+                            android:backgroundTint="@color/blue"
                             android:layout_marginStart="8dp" />
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- Notification Box 2 -->
                 <LinearLayout
-                    android:id="@+id/notification_box_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp"
-                    android:layout_margin="8dp"
+                    android:layout_marginTop="8dp"
                     android:elevation="4dp"
                     android:background="@drawable/rounded_border">
 
@@ -235,31 +195,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="end"
-                        android:layout_marginTop="8dp">
+                        android:gravity="end">
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/blue"
-                            android:text="Aceitar" />
+                            android:text="Aceitar"
+                            android:backgroundTint="@color/blue" />
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/blue"
                             android:text="Rejeitar"
+                            android:backgroundTint="@color/blue"
                             android:layout_marginStart="8dp" />
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- Notification Box 3 -->
                 <LinearLayout
-                    android:id="@+id/notification_box_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp"
-                    android:layout_margin="8dp"
+                    android:layout_marginTop="8dp"
                     android:elevation="4dp"
                     android:background="@drawable/rounded_border">
 
@@ -274,20 +233,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="end"
-                        android:layout_marginTop="16dp">
+                        android:gravity="end">
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/blue"
-                            android:text="Aceitar" />
+                            android:text="Aceitar"
+                            android:backgroundTint="@color/blue" />
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/blue"
                             android:text="Rejeitar"
+                            android:backgroundTint="@color/blue"
                             android:layout_marginStart="8dp" />
                     </LinearLayout>
                 </LinearLayout>

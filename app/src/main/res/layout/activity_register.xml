@@ -1,131 +1,111 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/blue_white"
-    >
+    tools:context=".RegisterActivity">
 
-    <!-- Header -->
-    <LinearLayout
-        android:id="@+id/header"
+    <com.example.konnect.ComponentHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true">
+        app:headerText="Register Page"
+        app:showExitButton="false" />
 
-        <ImageView
-            android:id="@+id/header_logo"
-            android:layout_width="40dp"
-            android:layout_height="60dp"
-            android:src="@drawable/konnect_logo" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/header_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Register Page"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <!-- Body -->
-    <LinearLayout
-        android:id="@+id/body"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_below="@id/header"
-        android:layout_above="@id/footer">
-
-        <TextView
-            android:id="@+id/register_heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_register"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
-
-        <TextView
-            android:id="@+id/register_subheading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_register_subtitle"
-            android:textColor="@color/blue"
-            android:textSize="16sp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
 
         <LinearLayout
+            android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="16dp">
+            android:orientation="vertical">
 
             <TextView
+                android:id="@+id/register_heading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_username" />
-
-            <EditText
-                android:id="@+id/username_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/placeholder_username"/>
+                android:text="@string/text_register"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
 
             <TextView
+                android:id="@+id/register_subheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:text="@string/label_password" />
+                android:text="@string/text_register_subtitle"
+                android:textColor="@color/blue"
+                android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/password_input"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/placeholder_password"
-                android:inputType="textPassword" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:paddingTop="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_username" />
 
-            <Button
-                android:id="@+id/button_back"
-                android:layout_width="0dp"
+                <EditText
+                    android:id="@+id/username_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/placeholder_username"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:text="@string/label_password" />
+
+                <EditText
+                    android:id="@+id/password_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/placeholder_password"
+                    android:inputType="textPassword" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="@color/blue"
-                android:text="@string/button_back" />
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="16dp">
 
-            <Button
-                android:id="@+id/button_confirm"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="@color/blue"
-                android:text="@string/button_confirm" />
+                <Button
+                    android:id="@+id/button_back"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/blue"
+                    android:text="@string/button_back" />
+
+                <Button
+                    android:id="@+id/button_confirm"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/blue"
+                    android:text="@string/button_confirm" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
-    <!-- Footer -->
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:padding="16dp"
-        android:layout_alignParentBottom="true">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/footer_text"
@@ -141,4 +121,4 @@
             android:text="@string/button_about_us"
             android:textColor="@color/blue" />
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

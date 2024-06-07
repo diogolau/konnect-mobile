@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="ComponentHeader">
+        <attr name="headerText" format="string" />
+        <attr name="showExitButton" format="boolean" />
+    </declare-styleable>
+</resources>

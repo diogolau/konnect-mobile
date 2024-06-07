@@ -1,5 +1,6 @@
 package com.example.konnect;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -7,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,7 +17,7 @@ public class FeedActivity extends AppCompatActivity {
     private Button navFeed, navGroups, navNotifications;
     private LinearLayout feedSection, groupsSection, notificationsSection;
     private ImageButton homeButton;
-    private Button postButton;
+    private Button postButton, grauMinButton, grauMaxButton;
     private EditText contentInput;
     private LinearLayout feedListContainer;
 
@@ -31,6 +33,8 @@ public class FeedActivity extends AppCompatActivity {
         postButton = findViewById(R.id.post_button);
         contentInput = findViewById(R.id.content_input);
         feedListContainer = findViewById(R.id.feed_list_container);
+        grauMinButton = findViewById(R.id.grau_min_button);
+        grauMaxButton = findViewById(R.id.grau_max_button);
 
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
@@ -78,6 +82,20 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
+        grauMinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNumberPickerDialog(grauMinButton, "Grau Mínimo");
+            }
+        });
+
+        grauMaxButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNumberPickerDialog(grauMaxButton, "Grau Máximo");
+            }
+        });
+
         // Default to Feed tab
         setActiveTab(navFeed);
         showSection(feedSection);
@@ -120,26 +138,21 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayout likeDislikeLayout = new LinearLayout(this);
         likeDislikeLayout.setOrientation(LinearLayout.HORIZONTAL);
         likeDislikeLayout.setPadding(0, 16, 0, 0);
-        likeDislikeLayout.setGravity(View.TEXT_ALIGNMENT_CENTER); // Center align the layout
+        likeDislikeLayout.setGravity(android.view.Gravity.CENTER_VERTICAL); // Center align the layout
 
         ImageView likeIcon = new ImageView(this);
         likeIcon.setImageResource(R.drawable.konnect_like);
         LinearLayout.LayoutParams iconLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        iconLayoutParams.setMargins(0, 0, 16, 0); // Increased space between icon and count
+        iconLayoutParams.setMargins(0, 0, 16, 0);
         likeIcon.setLayoutParams(iconLayoutParams);
 
         TextView likeCount = new TextView(this);
         likeCount.setText("4");
         likeCount.setTextSize(16);
         likeCount.setTextColor(getResources().getColor(R.color.blue)); // Change to blue color
-        LinearLayout.LayoutParams likeCountLayoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        likeCountLayoutParams.setMargins(0, 0, 32, 0); // Increased space between like and dislike
-        likeCount.setLayoutParams(likeCountLayoutParams);
-        likeCount.setGravity(View.TEXT_ALIGNMENT_CENTER); // Center align the text
+        likeCount.setGravity(android.view.Gravity.CENTER_VERTICAL); // Center align the text
 
         ImageView dislikeIcon = new ImageView(this);
         dislikeIcon.setImageResource(R.drawable.konnect_dislike);
@@ -149,8 +162,7 @@ public class FeedActivity extends AppCompatActivity {
         dislikeCount.setText("12");
         dislikeCount.setTextSize(16);
         dislikeCount.setTextColor(getResources().getColor(R.color.blue)); // Change to blue color
-        dislikeCount.setLayoutParams(iconLayoutParams);
-        dislikeCount.setGravity(View.TEXT_ALIGNMENT_CENTER); // Center align the text
+        dislikeCount.setGravity(android.view.Gravity.CENTER_VERTICAL); // Center align the text
 
         likeDislikeLayout.addView(likeIcon);
         likeDislikeLayout.addView(likeCount);
@@ -161,5 +173,21 @@ public class FeedActivity extends AppCompatActivity {
         newPost.addView(postContent);
         newPost.addView(likeDislikeLayout);
         feedListContainer.addView(newPost, 0); // Add the new post at the top of the list
+    }
+
+    private void showNumberPickerDialog(Button button, String title) {
+        NumberPicker numberPicker = new NumberPicker(this);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(10);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(numberPicker);
+        builder.setTitle(title);
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            int value = numberPicker.getValue();
+            button.setText(title + ": " + value);
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 }
