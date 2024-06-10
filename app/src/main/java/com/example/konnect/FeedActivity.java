@@ -1,7 +1,12 @@
 package com.example.konnect;
 
+import static com.example.konnect.NetworkUtils.makeGetRequest;
+import static com.example.konnect.NetworkUtils.makePostRequest;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +17,10 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -19,10 +28,11 @@ public class FeedActivity extends AppCompatActivity {
     private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer;
     private ImageButton homeButton;
     private Button postButton;
-    private EditText contentInput;
+    private EditText postContent;
     private LinearLayout feedListContainer;
     private ComponentHeader header;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +43,7 @@ public class FeedActivity extends AppCompatActivity {
         navNotifications = findViewById(R.id.nav_notifications);
         homeButton = findViewById(R.id.header_home_button);
         postButton = findViewById(R.id.post_button);
-        contentInput = findViewById(R.id.content_input);
+        postContent = findViewById(R.id.content_input);
         feedListContainer = findViewById(R.id.feed_list_container);
         grauButtonsContainer = findViewById(R.id.grau_buttons_container);
         header = findViewById(R.id.header);
@@ -41,6 +51,31 @@ public class FeedActivity extends AppCompatActivity {
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
         notificationsSection = findViewById(R.id.notifications_section);
+
+        String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", "3687c3a4-47c1-45fe-afc3-cf215d0bef91", "null");
+
+        String response = makeGetRequest(url);
+        Log.i("abloble", response);
+
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject postObject = jsonArray.getJSONObject(i);
+                String id = postObject.getString("id");
+                String username = postObject.getString("username");
+                String content = postObject.getString("content");
+                String userId = postObject.getString("userId");
+                String upvotes = postObject.getString("upvotes");
+                String downvotes = postObject.getString("downvotes");
+
+                addNewPost(content, username, upvotes, downvotes, id);
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando posts", e.toString());
+        }
 
         navFeed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,13 +114,29 @@ public class FeedActivity extends AppCompatActivity {
         });
 
         postButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("UnsafeIntentLaunch")
             @Override
             public void onClick(View v) {
-                String content = contentInput.getText().toString();
-                if (!content.isEmpty()) {
-                    addNewPost(content);
-                    contentInput.setText(""); // Clear the input field
+                String postMessage = postContent.getText().toString();
+
+                if (postMessage.isEmpty()) {
+                    Toast.makeText(getBaseContext(), "Escreva a sua mensagem", Toast.LENGTH_LONG).show();
+                    return;
                 }
+
+                String url = "http://10.0.2.2:8080/server_war_exploded/api/post" ;
+                String body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, "4c92f976-b7ab-4f67-8335-03b0695ead6f", "null");
+
+                String response = makePostRequest(url, body);
+                Log.i("response", response);
+
+                if (!response.contains("__error__")) {
+                    finish();
+                    startActivity(getIntent());
+                } else {
+                    Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -142,7 +193,7 @@ public class FeedActivity extends AppCompatActivity {
         notificationsSection.setVisibility(section == notificationsSection ? View.VISIBLE : View.GONE);
     }
 
-    private void addNewPost(String content) {
+    private void addNewPost(String content, String userNameContent, String upvotesContent, String downvotesContent, String postId) {
         LinearLayout newPost = new LinearLayout(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -155,18 +206,23 @@ public class FeedActivity extends AppCompatActivity {
         newPost.setBackgroundResource(R.drawable.rounded_border);
 
         TextView userName = new TextView(this);
-        userName.setText("userName");
-        userName.setTextSize(16);
+        userName.setText(userNameContent);
+        userName.setTextSize(18);
         userName.setTextColor(getResources().getColor(R.color.black));
 
         TextView postContent = new TextView(this);
         postContent.setText(content);
         postContent.setTextSize(16);
         postContent.setTextColor(getResources().getColor(R.color.gray));
+        LinearLayout.LayoutParams postContentPadding = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        postContentPadding.setMargins(0, 12, 0, 4);
+        postContent.setLayoutParams(postContentPadding);
 
         LinearLayout likeDislikeLayout = new LinearLayout(this);
         likeDislikeLayout.setOrientation(LinearLayout.HORIZONTAL);
-        likeDislikeLayout.setPadding(0, 16, 0, 0);
+        likeDislikeLayout.setPadding(0, 24, 0, 0);
         likeDislikeLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
 
         ImageView likeIcon = new ImageView(this);
@@ -174,23 +230,25 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayout.LayoutParams iconLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        iconLayoutParams.setMargins(0, 0, 8, 0);
+        iconLayoutParams.setMargins(0, 0, 18, 0);
         likeIcon.setLayoutParams(iconLayoutParams);
+        likeIcon.setTag(postId);
 
         TextView likeCount = new TextView(this);
-        likeCount.setText("4");
+        likeCount.setText(upvotesContent);
         likeCount.setTextSize(16);
-        likeCount.setTextColor(getResources().getColor(R.color.blue));
+        likeCount.setTextColor(getResources().getColor(R.color.primary));
         likeCount.setLayoutParams(iconLayoutParams);
 
         ImageView dislikeIcon = new ImageView(this);
         dislikeIcon.setImageResource(R.drawable.konnect_dislike);
         dislikeIcon.setLayoutParams(iconLayoutParams);
+        dislikeIcon.setTag(postId);
 
         TextView dislikeCount = new TextView(this);
-        dislikeCount.setText("12");
+        dislikeCount.setText(downvotesContent);
         dislikeCount.setTextSize(16);
-        dislikeCount.setTextColor(getResources().getColor(R.color.blue));
+        dislikeCount.setTextColor(getResources().getColor(R.color.primary));
         dislikeCount.setLayoutParams(iconLayoutParams);
 
         likeDislikeLayout.addView(likeIcon);

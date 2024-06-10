@@ -5,86 +5,116 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/blue_white"
-    tools:context=".LoginActivity">
+    tools:context=".RegisterActivity">
 
-    <com.example.konnect.ComponentHeader
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:headerText="Login Page"
-        app:showExitButton="false" />
-
-    <LinearLayout
-        android:id="@+id/body"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/register_heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_welcome"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/register_subheading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_welcome_subtitle"
-            android:textColor="@color/blue"
-            android:textSize="16sp" />
+        android:paddingHorizontal="32dp">
 
         <LinearLayout
+            android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="16dp">
+            android:layout_gravity="center"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/home_image"
+                android:layout_width="86dp"
+                android:layout_height="116dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/konnect_logo" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_username" />
-
-            <EditText
-                android:id="@+id/username_input"
+                android:id="@+id/register_heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/placeholder_username" />
+                android:text="@string/text_welcome"
+                android:layout_marginTop="8dp"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textAlignment="center"
+                android:layout_gravity="center"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:text="@string/label_password" />
-
-            <EditText
-                android:id="@+id/password_input"
+                android:id="@+id/register_subheading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/placeholder_password"
-                android:inputType="textPassword" />
-        </LinearLayout>
+                android:text="@string/text_welcome_subtitle"
+                android:textColor="@color/primary"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="16dp">
-
-            <Button
-                android:id="@+id/button_confirm"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="@color/blue"
-                android:text="@string/button_confirm" />
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_username"
+                    android:textSize="18sp"/>
+
+                <EditText
+                    android:id="@+id/username_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/placeholder_username"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:text="@string/label_password"
+                    android:textSize="18sp"/>
+
+                <EditText
+                    android:id="@+id/password_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/placeholder_password"
+                    android:inputType="textPassword" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1" />
+
+                <Button
+                    android:id="@+id/button_login"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="12dp"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/white"
+                    android:text="@string/button_login" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1" />
+            </LinearLayout>
+
+
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/footer"
@@ -98,8 +128,8 @@
             android:id="@+id/footer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_no_account"
-            android:textColor="@color/gray"/>
+            android:textSize="18sp"
+            android:text="@string/text_no_account" />
 
         <Button
             android:id="@+id/button_saiba_mais"
@@ -107,6 +137,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:text="@string/button_register"
-            android:textColor="@color/blue" />
+            android:textSize="18sp"
+            android:textColor="@color/primary" />
     </LinearLayout>
 </LinearLayout>

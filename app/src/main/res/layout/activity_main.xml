@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:text="@string/button_about"
+            android:textSize="18dp"
             android:textColor="@color/gray" />
 
         <Button
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:text="@string/button_repo"
+            android:textSize="18dp"
             android:textColor="@color/gray"/>
     </LinearLayout>
 
@@ -39,15 +41,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingVertical="60dp"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center">
 
         <ImageView
             android:id="@+id/home_image"
-            android:layout_width="166dp"
-            android:layout_height="234dp"
+            android:layout_width="132dp"
+            android:layout_height="197dp"
             android:layout_marginTop="16dp"
-            android:src="@drawable/konnect_logo"/>
+            android:src="@drawable/konnect_logo" />
 
         <TextView
             android:id="@+id/welcome_text"
@@ -56,13 +59,13 @@
             android:layout_marginTop="32dp"
             android:text="@string/home_title"
             android:textColor="@color/gray"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="@string/home_text"
             android:textColor="@color/black"
@@ -79,7 +82,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/blue"
+            android:backgroundTint="@color/primary"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="60dp"
+            android:textSize="18sp"
             android:text="@string/button_login" />
     </LinearLayout>
 
@@ -88,15 +94,16 @@
         android:id="@+id/footer_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:padding="16dp">
 
         <TextView
             android:id="@+id/footer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_no_account" />
+            android:text="@string/text_no_account"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/button_register"
@@ -104,6 +111,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:text="@string/button_register"
-            android:textColor="@color/blue" />
+            android:textColor="@color/primary"
+            android:textSize="18sp" />
     </LinearLayout>
 </LinearLayout>

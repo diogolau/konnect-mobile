@@ -48,7 +48,7 @@
                         android:background="@android:color/transparent"
                         android:text="Grau Mínimo"
                         android:contentDescription="Grau Mínimo"
-                        android:textColor="@color/blue" />
+                        android:textColor="@color/primary" />
 
                     <Button
                         android:id="@+id/grau_max_button"
@@ -57,7 +57,7 @@
                         android:background="@android:color/transparent"
                         android:text="Grau Máximo"
                         android:contentDescription="Grau Máximo"
-                        android:textColor="@color/blue" />
+                        android:textColor="@color/primary" />
                 </LinearLayout>
 
                 <!--Search Bar-->
@@ -88,7 +88,7 @@
                     android:id="@+id/post_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/blue"
+                    android:backgroundTint="@color/primary"
                     android:text="Postar" />
 
                 <!-- Post List -->
@@ -157,7 +157,7 @@
                             android:layout_height="wrap_content"
                             android:text="25"
                             android:textSize="16sp"
-                            android:textColor="@color/blue"
+                            android:textColor="@color/primary"
                             android:gravity="center_vertical" />
                     </LinearLayout>
                 </LinearLayout>
@@ -196,7 +196,7 @@
                             android:layout_height="wrap_content"
                             android:text="32"
                             android:textSize="16sp"
-                            android:textColor="@color/blue"
+                            android:textColor="@color/primary"
                             android:gravity="center_vertical" />
                     </LinearLayout>
                 </LinearLayout>
@@ -236,7 +236,7 @@
                             android:layout_height="wrap_content"
                             android:text="19"
                             android:textSize="16sp"
-                            android:textColor="@color/blue"
+                            android:textColor="@color/primary"
                             android:gravity="center_vertical" />
                     </LinearLayout>
                 </LinearLayout>
@@ -373,7 +373,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/blue">
+        android:background="@color/primary">
 
         <Button
             android:id="@+id/nav_feed"

@@ -5,6 +5,7 @@ plugins {
 android {
     namespace = "com.example.konnect"
     compileSdk = 34
+    useLibrary("org.apache.http.legacy")
 
     defaultConfig {
         applicationId = "com.example.konnect"
@@ -37,4 +38,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 }
