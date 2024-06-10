@@ -7,6 +7,7 @@
     <string name="button_repo">Repositório</string>
     <string name="text_no_account">Não tem conta?</string>
     <string name="button_register">Criar conta</string>
+    <string name="text_already_registered">Já tem conta?</string>
     <string name="text_welcome">Seja bem-vindo ao Konnect</string>
     <string name="text_welcome_subtitle">Crie conexões reais</string>
     <string name="label_username">Username</string>
