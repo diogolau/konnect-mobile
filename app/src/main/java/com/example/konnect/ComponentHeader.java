@@ -21,6 +21,10 @@ public class ComponentHeader extends LinearLayout {
         init(context, attrs);
     }
 
+    public void setHeaderText(String text) {
+        headerText.setText(text);
+    }
+
     private void init(Context context, AttributeSet attrs) {
         LayoutInflater.from(context).inflate(R.layout.component_header, this, true);
 

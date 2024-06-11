@@ -34,8 +34,8 @@ public class FeedActivity extends AppCompatActivity {
     private EditText postContent;
     private LinearLayout feedListContainer;
     private ComponentHeader header;
-
     private EditText searchBar;
+    private String username;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -43,6 +43,7 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+        username = getIntent().getStringExtra("username");
         navFeed = findViewById(R.id.nav_feed);
         navGroups = findViewById(R.id.nav_groups);
         navNotifications = findViewById(R.id.nav_notifications);
@@ -57,6 +58,8 @@ public class FeedActivity extends AppCompatActivity {
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
         notificationsSection = findViewById(R.id.notifications_section);
+
+        header.setHeaderText(username);
 
         String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", "3687c3a4-47c1-45fe-afc3-cf215d0bef91", "null");
 
