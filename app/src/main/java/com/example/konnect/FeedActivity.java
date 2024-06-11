@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.text.Editable; 
+import android.text.TextWatcher; 
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,6 +47,7 @@ public class FeedActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.header_home_button);
         postButton = findViewById(R.id.post_button);
         postContent = findViewById(R.id.content_input);
+        searchBar = (EditText) findViewById(R.id.search_bar);
         feedListContainer = findViewById(R.id.feed_list_container);
         grauButtonsContainer = findViewById(R.id.grau_buttons_container);
         header = findViewById(R.id.header);
@@ -53,13 +56,13 @@ public class FeedActivity extends AppCompatActivity {
         groupsSection = findViewById(R.id.groups_section);
         notificationsSection = findViewById(R.id.notifications_section);
 
-        String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", "3687c3a4-47c1-45fe-afc3-cf215d0bef91", "null");
+        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", "3687c3a4-47c1-45fe-afc3-cf215d0bef91", "null");
 
-        String response = makeGetRequest(url);
-        Log.i("abloble", response);
+        String postsResponse = makeGetRequest(listPostsUrl);
+        Log.i("abloble", postsResponse);
 
         try {
-            JSONObject jsonObject = new JSONObject(response);
+            JSONObject jsonObject = new JSONObject(postsResponse);
             String message = jsonObject.getString("message");
             JSONArray jsonArray = new JSONArray(message);
 
@@ -76,6 +79,44 @@ public class FeedActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             Log.i("Erro listando posts", e.toString());
+        }
+
+        String listNotificationsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userId=%s", "todo userid");
+        String notificationsResponse = makeGetRequest(listNotificationsUrl);
+
+        try {
+            JSONObject jsonObject = new JSONObject(notificationsResponse);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject notificationObject = jsonArray.getJSONObject(i);
+                String id = notificationObject.getString("id");
+                String username = notificationObject.getString("username");
+
+                // addNewNotification(id, username);
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando notificações", e.toString());
+        }
+
+        String listKnsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/kn?userId=%s", "todo userid");
+        String knsResponse = makeGetRequest(listKnsUrl);
+
+        try {
+            JSONObject jsonObject = new JSONObject(knsResponse);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject knObject = jsonArray.getJSONObject(i);
+                String id = knObject.getString("id");
+                String name = knObject.getString("name");
+
+                // addNewKn(id, name);
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando kns", e.toString());
         }
 
         navFeed.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +153,35 @@ public class FeedActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
+        });
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", "todo", s.toString());
+                String usersResponse = makeGetRequest(listUsersUrl); 
+                Log.i("usersResponse", usersResponse);
+                try {
+                    JSONObject jsonObject = new JSONObject(usersResponse);
+                    String message = jsonObject.getString("message");
+                    JSONArray jsonArray = new JSONArray(message);
+        
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject knObject = jsonArray.getJSONObject(i);
+                        String id = knObject.getString("id");
+                        String username = knObject.getString("username");
+                        String status = knObject.getString("status");
+
+                        // addNewConnection(id, name, status);
+                    }
+                } catch (Exception e) {
+                    Log.i("Erro listando conexões", e.toString());
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
         postButton.setOnClickListener(new View.OnClickListener() {
@@ -287,6 +357,26 @@ public class FeedActivity extends AppCompatActivity {
         newPost.addView(postContent);
         newPost.addView(likeDislikeLayout);
         feedListContainer.addView(newPost, 0); // Add the new post at the top of the list
+    }
+
+    private addNewNotification(String id, String username) {
+        // todo
+        // ADD THIS AS LISTENER TO THE BUTTON ACCEPT
+        String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s", id, "todo userId");
+        String response = makePutRequest(url);
+    }
+
+    private addNewKn(String id, String name) {
+        // todo
+    }
+
+    private addNewConnection(String id, String name, String status) {
+        // todo
+        // ADD THIS AS LISTENER TO BUTTON FOLLOW
+        String inviteUrl = "http://10.0.2.2:8080/server_war_exploded/api/connection" ;
+        String body = String.format("{\"userFromId\":\"%s\", \"userToId\":\"%s\"}", "todo userid", id);
+
+        String response = makePostRequest(inviteUrl, body);
     }
 
     private void openFeedWithGroup(String groupName) {
