@@ -35,6 +35,8 @@ public class FeedActivity extends AppCompatActivity {
     private LinearLayout feedListContainer;
     private ComponentHeader header;
 
+    private EditText searchBar;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,20 +203,23 @@ public class FeedActivity extends AppCompatActivity {
                 String response = makePostRequest(url, body);
                 Log.i("response", response);
 
-                if (!response.contains("__error__")) {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String id = jsonObject.getString("id");
-                    String content = jsonObject.getString("content");
-                    String userId = jsonObject.getString("userId");
-                    String knId = jsonObject.getString("knId");
-                    String username = "TODO";
-                    addNewPost(content, username, "0", "0", id);
-                    // finish();
-                    // startActivity(getIntent());
-                } else {
-                    Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
+                try {
+                    if (!response.contains("__error__")) {
+                        JSONObject jsonObject = new JSONObject(response);
+                        String id = jsonObject.getString("id");
+                        String content = jsonObject.getString("content");
+                        String userId = jsonObject.getString("userId");
+                        String knId = jsonObject.getString("knId");
+                        String username = "TODO";
+                        addNewPost(content, username, "0", "0", id);
+                        // finish();
+                        // startActivity(getIntent());
+                    } else {
+                        Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    Log.i("Error post button", e.toString());
                 }
-
             }
         });
 
@@ -359,18 +364,18 @@ public class FeedActivity extends AppCompatActivity {
         feedListContainer.addView(newPost, 0); // Add the new post at the top of the list
     }
 
-    private addNewNotification(String id, String username) {
+    private void addNewNotification(String id, String username) {
         // todo
         // ADD THIS AS LISTENER TO THE BUTTON ACCEPT
         String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s", id, "todo userId");
         String response = makePutRequest(url);
     }
 
-    private addNewKn(String id, String name) {
+    private void addNewKn(String id, String name) {
         // todo
     }
 
-    private addNewConnection(String id, String name, String status) {
+    private void addNewConnection(String id, String name, String status) {
         // todo
         // ADD THIS AS LISTENER TO BUTTON FOLLOW
         String inviteUrl = "http://10.0.2.2:8080/server_war_exploded/api/connection" ;
