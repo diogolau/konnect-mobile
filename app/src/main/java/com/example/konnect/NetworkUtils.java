@@ -38,8 +38,10 @@ public class NetworkUtils {
     }
 
     public static String makePutRequest(String url) {
+        RequestBody body = RequestBody.create("", null);
         Request request = new Request.Builder()
                 .url(url)
+                .put(body)
                 .build();
         try {
             Response response = client.newCall(request).execute();
