@@ -63,68 +63,9 @@ public class FeedActivity extends AppCompatActivity {
 
         header.setHeaderText(username);
 
-        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", userId, "null");
-
-        String postsResponse = makeGetRequest(listPostsUrl);
-        Log.i("abloble", postsResponse);
-
-        try {
-            JSONObject jsonObject = new JSONObject(postsResponse);
-            String message = jsonObject.getString("message");
-            JSONArray jsonArray = new JSONArray(message);
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject postObject = jsonArray.getJSONObject(i);
-                String id = postObject.getString("id");
-                String username = postObject.getString("username");
-                String content = postObject.getString("content");
-                String userId = postObject.getString("userId");
-                String upvotes = postObject.getString("upvotes");
-                String downvotes = postObject.getString("downvotes");
-
-                addNewPost(content, username, upvotes, downvotes, id);
-            }
-        } catch (Exception e) {
-            Log.i("Erro listando posts", e.toString());
-        }
-
-        String listNotificationsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userId=%s", userId);
-        String notificationsResponse = makeGetRequest(listNotificationsUrl);
-
-        try {
-            JSONObject jsonObject = new JSONObject(notificationsResponse);
-            String message = jsonObject.getString("message");
-            JSONArray jsonArray = new JSONArray(message);
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject notificationObject = jsonArray.getJSONObject(i);
-                String id = notificationObject.getString("id");
-                String username = notificationObject.getString("username");
-
-                addNewNotification(id, username);
-            }
-        } catch (Exception e) {
-            Log.i("Erro listando notificações", e.toString());
-        }
-
-        String listKnsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/kn?userId=%s", userId);
-        String knsResponse = makeGetRequest(listKnsUrl);
-
-        try {
-            JSONObject jsonObject = new JSONObject(knsResponse);
-            String message = jsonObject.getString("message");
-            JSONArray jsonArray = new JSONArray(message);
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject knObject = jsonArray.getJSONObject(i);
-                String id = knObject.getString("id");
-                String name = knObject.getString("name");
-
-                // addNewKn(id, name);
-            }
-        } catch (Exception e) {
-            Log.i("Erro listando kns", e.toString());
-        }
+        loadPosts();
+        loadNotifications();
+        loadGroups();
 
         navFeed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,27 +195,6 @@ public class FeedActivity extends AppCompatActivity {
         setActiveTab(navFeed);
         showSection(feedSection);
 
-        findViewById(R.id.group_box_1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFeedWithGroup("Shining Star");
-            }
-        });
-
-        findViewById(R.id.group_box_2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFeedWithGroup("Beaty queens");
-            }
-        });
-
-        findViewById(R.id.group_box_3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFeedWithGroup("Angry uncles");
-            }
-        });
-
         // Grau Minimo and Grau Maximo Buttons
         findViewById(R.id.grau_min_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -301,6 +221,55 @@ public class FeedActivity extends AppCompatActivity {
         feedSection.setVisibility(section == feedSection ? View.VISIBLE : View.GONE);
         groupsSection.setVisibility(section == groupsSection ? View.VISIBLE : View.GONE);
         notificationsSection.setVisibility(section == notificationsSection ? View.VISIBLE : View.GONE);
+    }
+
+    private void loadPosts() {
+        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", userId, "null");
+
+        String postsResponse = makeGetRequest(listPostsUrl);
+        Log.i("abloble", postsResponse);
+
+        try {
+            JSONObject jsonObject = new JSONObject(postsResponse);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject postObject = jsonArray.getJSONObject(i);
+                String id = postObject.getString("id");
+                String username = postObject.getString("username");
+                String content = postObject.getString("content");
+                String userId = postObject.getString("userId");
+                String upvotes = postObject.getString("upvotes");
+                String downvotes = postObject.getString("downvotes");
+
+                addNewPost(content, username, upvotes, downvotes, id);
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando posts", e.toString());
+        }
+    }
+
+    private void loadGroups() {
+        groupsSection.removeAllViews();
+        String listKnsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/kn?userId=%s", userId);
+        String knsResponse = makeGetRequest(listKnsUrl);
+
+        try {
+            JSONObject jsonObject = new JSONObject(knsResponse);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject knObject = jsonArray.getJSONObject(i);
+                String id = knObject.getString("id");
+                String name = knObject.getString("name");
+
+                addNewKn(id, name);
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando grupos", e.toString());
+        }
     }
 
     private void addNewPost(String content, String userNameContent, String upvotesContent, String downvotesContent, String postId) {
@@ -494,7 +463,45 @@ public class FeedActivity extends AppCompatActivity {
 
 
     private void addNewKn(String id, String name) {
-        // todo
+        LinearLayout groupBox = new LinearLayout(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(16, 32, 16, 0); // Double the margin between groups
+        groupBox.setLayoutParams(layoutParams);
+        groupBox.setOrientation(LinearLayout.VERTICAL);
+        groupBox.setPadding(32, 40, 32, 40);
+        groupBox.setElevation(4);
+        groupBox.setBackgroundResource(R.drawable.rounded_border);
+
+        LinearLayout groupHeader = new LinearLayout(this);
+        groupHeader.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        groupHeader.setOrientation(LinearLayout.HORIZONTAL);
+        groupHeader.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+        TextView groupName = new TextView(this);
+        groupName.setText(name);
+        groupName.setTextSize(16);
+        groupName.setTextColor(getResources().getColor(R.color.black));
+        groupHeader.addView(groupName);
+
+        View spacer = new View(this);
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        spacer.setLayoutParams(spacerParams);
+        groupHeader.addView(spacer);
+
+        groupBox.addView(groupHeader);
+
+        groupBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFeedWithGroup(name, id);
+            }
+        });
+
+        groupsSection.addView(groupBox);
     }
 
     private void addNewConnection(String id, String name, String status) {
@@ -569,11 +576,40 @@ public class FeedActivity extends AppCompatActivity {
         usersContainer.addView(newUser, 0); // Add the new user at the top of the list
     }
 
-    private void openFeedWithGroup(String groupName) {
+    private void openFeedWithGroup(String groupName, String groupId) {
         setActiveTab(navFeed);
         showSection(feedSection);
         grauButtonsContainer.setVisibility(View.GONE);
         header.setGroupName(groupName);
+        loadGroupPosts(groupId);
+    }
+
+    private void loadGroupPosts(String groupId) {
+        feedListContainer.removeAllViews();
+        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", userId, groupId);
+
+        String postsResponse = makeGetRequest(listPostsUrl);
+        Log.i("abloble", postsResponse);
+
+        try {
+            JSONObject jsonObject = new JSONObject(postsResponse);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject postObject = jsonArray.getJSONObject(i);
+                String id = postObject.getString("id");
+                String username = postObject.getString("username");
+                String content = postObject.getString("content");
+                String userId = postObject.getString("userId");
+                String upvotes = postObject.getString("upvotes");
+                String downvotes = postObject.getString("downvotes");
+
+                addNewPost(content, username, upvotes, downvotes, id);
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando posts", e.toString());
+        }
     }
 
     private void showNumberPickerDialog(final Button button, final String title) {
