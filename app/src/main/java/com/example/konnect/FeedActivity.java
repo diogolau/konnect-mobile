@@ -28,11 +28,10 @@ import org.json.JSONObject;
 public class FeedActivity extends AppCompatActivity {
 
     private Button navFeed, navGroups, navNotifications;
-    private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer;
+    private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer, feedListContainer, usersContainer;
     private ImageButton homeButton;
     private Button postButton;
     private EditText postContent;
-    private LinearLayout feedListContainer;
     private ComponentHeader header;
     private EditText searchBar;
     private String username;
@@ -52,6 +51,7 @@ public class FeedActivity extends AppCompatActivity {
         postContent = findViewById(R.id.content_input);
         searchBar = (EditText) findViewById(R.id.search_bar);
         feedListContainer = findViewById(R.id.feed_list_container);
+        usersContainer = findViewById(R.id.users_container);
         grauButtonsContainer = findViewById(R.id.grau_buttons_container);
         header = findViewById(R.id.header);
 
@@ -161,26 +161,42 @@ public class FeedActivity extends AppCompatActivity {
         });
 
         searchBar.addTextChangedListener(new TextWatcher() {
-
             public void afterTextChanged(Editable s) {
-                String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", "todo", s.toString());
-                String usersResponse = makeGetRequest(listUsersUrl); 
-                Log.i("usersResponse", usersResponse);
-                try {
-                    JSONObject jsonObject = new JSONObject(usersResponse);
-                    String message = jsonObject.getString("message");
-                    JSONArray jsonArray = new JSONArray(message);
-        
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject knObject = jsonArray.getJSONObject(i);
-                        String id = knObject.getString("id");
-                        String username = knObject.getString("username");
-                        String status = knObject.getString("status");
+                String searchText = s.toString();
 
-                        // addNewConnection(id, name, status);
+                if (searchText.isEmpty()) {
+                    grauButtonsContainer.setVisibility(View.VISIBLE);
+                    postContent.setVisibility(View.VISIBLE);
+                    postButton.setVisibility(View.VISIBLE);
+                    feedListContainer.setVisibility(View.VISIBLE);
+                    usersContainer.setVisibility(View.GONE);
+                } else {
+                    grauButtonsContainer.setVisibility(View.GONE);
+                    postContent.setVisibility(View.GONE);
+                    postButton.setVisibility(View.GONE);
+                    feedListContainer.setVisibility(View.GONE);
+                    usersContainer.setVisibility(View.VISIBLE);
+
+                    String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", "todo", s.toString());
+                    String usersResponse = makeGetRequest(listUsersUrl);
+                    Log.i("usersResponse", usersResponse);
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(usersResponse);
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = new JSONArray(message);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject knObject = jsonArray.getJSONObject(i);
+                            String id = knObject.getString("id");
+                            String username = knObject.getString("username");
+                            String status = knObject.getString("status");
+
+                            // addNewConnection(id, name, status);
+                        }
+                    } catch (Exception e) {
+                        Log.i("Erro listando conexões", e.toString());
                     }
-                } catch (Exception e) {
-                    Log.i("Erro listando conexões", e.toString());
                 }
             }
 
