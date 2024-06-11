@@ -249,6 +249,9 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadPosts() {
+        // Clear post list
+        feedListContainer.removeAllViews();
+
         String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", userId, "null");
 
         String postsResponse = makeGetRequest(listPostsUrl);
@@ -347,32 +350,39 @@ public class FeedActivity extends AppCompatActivity {
         likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int currentLikes = Integer.parseInt(likeCount.getText().toString());
+                currentLikes++;
+                likeCount.setText(String.valueOf(currentLikes));
+
                 String postId = (String) v.getTag();
                 String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?postId=%s&vote=upvote", postId);
-                String response = makePutRequest(url);
+                new Thread(() -> makePutRequest(url)).start(); // Send the request in a separate thread
             }
         });
-
 
         ImageView dislikeIcon = new ImageView(this);
         dislikeIcon.setImageResource(R.drawable.konnect_dislike);
         dislikeIcon.setLayoutParams(iconLayoutParams);
         dislikeIcon.setTag(postId);
 
-        dislikeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String postId = (String) v.getTag();
-                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?postId=%s&vote=downvote", postId);
-                String response = makePutRequest(url);
-            }
-        });
-
         TextView dislikeCount = new TextView(this);
         dislikeCount.setText(downvotesContent);
         dislikeCount.setTextSize(16);
         dislikeCount.setTextColor(getResources().getColor(R.color.primary));
         dislikeCount.setLayoutParams(iconLayoutParams);
+
+        dislikeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentDislikes = Integer.parseInt(dislikeCount.getText().toString());
+                currentDislikes++;
+                dislikeCount.setText(String.valueOf(currentDislikes));
+
+                String postId = (String) v.getTag();
+                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?postId=%s&vote=downvote", postId);
+                new Thread(() -> makePutRequest(url)).start(); // Send the request in a separate thread
+            }
+        });
 
         likeDislikeLayout.addView(likeIcon);
         likeDislikeLayout.addView(likeCount);
