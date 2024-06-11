@@ -2,6 +2,7 @@ package com.example.konnect;
 
 import static com.example.konnect.NetworkUtils.makeGetRequest;
 import static com.example.konnect.NetworkUtils.makePostRequest;
+import static com.example.konnect.NetworkUtils.makePutRequest;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -131,8 +132,15 @@ public class FeedActivity extends AppCompatActivity {
                 Log.i("response", response);
 
                 if (!response.contains("__error__")) {
-                    finish();
-                    startActivity(getIntent());
+                    JSONObject jsonObject = new JSONObject(response);
+                    String id = jsonObject.getString("id");
+                    String content = jsonObject.getString("content");
+                    String userId = jsonObject.getString("userId");
+                    String knId = jsonObject.getString("knId");
+                    String username = "TODO";
+                    addNewPost(content, username, "0", "0", id);
+                    // finish();
+                    // startActivity(getIntent());
                 } else {
                     Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
                 }
@@ -240,17 +248,36 @@ public class FeedActivity extends AppCompatActivity {
         likeCount.setTextColor(getResources().getColor(R.color.primary));
         likeCount.setLayoutParams(iconLayoutParams);
 
+        likeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String postId = (String) v.getTag();
+                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?postId=%s&vote=upvote", postId);
+                String response = makePutRequest(url);
+            }
+        });
+        
+        
         ImageView dislikeIcon = new ImageView(this);
         dislikeIcon.setImageResource(R.drawable.konnect_dislike);
         dislikeIcon.setLayoutParams(iconLayoutParams);
         dislikeIcon.setTag(postId);
+        
+        dislikeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String postId = (String) v.getTag();
+                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?postId=%s&vote=downvote", postId);
+                String response = makePutRequest(url);
+            }
+        });
 
         TextView dislikeCount = new TextView(this);
         dislikeCount.setText(downvotesContent);
         dislikeCount.setTextSize(16);
         dislikeCount.setTextColor(getResources().getColor(R.color.primary));
         dislikeCount.setLayoutParams(iconLayoutParams);
-
+        
         likeDislikeLayout.addView(likeIcon);
         likeDislikeLayout.addView(likeCount);
         likeDislikeLayout.addView(dislikeIcon);

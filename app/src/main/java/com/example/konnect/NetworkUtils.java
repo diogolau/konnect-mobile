@@ -37,11 +37,9 @@ public class NetworkUtils {
         }
     }
 
-    public static String makePutRequest(String url, String json) {
-        RequestBody body = RequestBody.create(json, JSON);
+    public static String makePutRequest(String url) {
         Request request = new Request.Builder()
                 .url(url)
-                .put(body)
                 .build();
         try {
             Response response = client.newCall(request).execute();
