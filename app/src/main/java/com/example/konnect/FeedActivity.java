@@ -431,9 +431,21 @@ public class FeedActivity extends AppCompatActivity {
         spacer.setLayoutParams(spacerParams);
 
         Button followButton = new Button(this);
-        followButton.setText("SEGUIR");
-        followButton.setTextColor(getResources().getColor(android.R.color.white, null));
-        followButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
+        if (status.equals("pending")) {
+            followButton.setText("Aguardando");
+            followButton.setTextColor(getResources().getColor(R.color.white, null));
+            followButton.setBackgroundTintList(getResources().getColorStateList(R.color.gray, null));
+            followButton.setEnabled(false);
+        } else if (status.equals("accepted")) {
+            followButton.setText("Seguindo");
+            followButton.setTextColor(getResources().getColor(R.color.white, null));
+            followButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
+            followButton.setEnabled(false);
+        } else {
+            followButton.setText("Seguir");
+            followButton.setTextColor(getResources().getColor(android.R.color.white, null));
+            followButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
+        }
         LinearLayout.LayoutParams followButtonParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
