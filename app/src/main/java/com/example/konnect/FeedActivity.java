@@ -11,8 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.text.Editable; 
-import android.text.TextWatcher; 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -101,7 +101,7 @@ public class FeedActivity extends AppCompatActivity {
                 String id = notificationObject.getString("id");
                 String username = notificationObject.getString("username");
 
-                // addNewNotification(id, username);
+                addNewNotification(id, username);
             }
         } catch (Exception e) {
             Log.i("Erro listando notificações", e.toString());
@@ -358,13 +358,13 @@ public class FeedActivity extends AppCompatActivity {
                 String response = makePutRequest(url);
             }
         });
-        
-        
+
+
         ImageView dislikeIcon = new ImageView(this);
         dislikeIcon.setImageResource(R.drawable.konnect_dislike);
         dislikeIcon.setLayoutParams(iconLayoutParams);
         dislikeIcon.setTag(postId);
-        
+
         dislikeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -379,7 +379,7 @@ public class FeedActivity extends AppCompatActivity {
         dislikeCount.setTextSize(16);
         dislikeCount.setTextColor(getResources().getColor(R.color.primary));
         dislikeCount.setLayoutParams(iconLayoutParams);
-        
+
         likeDislikeLayout.addView(likeIcon);
         likeDislikeLayout.addView(likeCount);
         likeDislikeLayout.addView(dislikeIcon);
@@ -391,12 +391,107 @@ public class FeedActivity extends AppCompatActivity {
         feedListContainer.addView(newPost, 0); // Add the new post at the top of the list
     }
 
-    private void addNewNotification(String id, String username) {
-        // todo
-        // ADD THIS AS LISTENER TO THE BUTTON ACCEPT
-        String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s", id, userId);
-        String response = makePutRequest(url);
+    private void loadNotifications() {
+        notificationsSection.removeAllViews();
+        String listNotificationsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userId=%s", userId);
+        String notificationsResponse = makeGetRequest(listNotificationsUrl);
+
+        try {
+            JSONObject jsonObject = new JSONObject(notificationsResponse);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject notificationObject = jsonArray.getJSONObject(i);
+                String id = notificationObject.getString("id");
+                String username = notificationObject.getString("username");
+
+                // Check if status exists before accessing it
+                if (notificationObject.has("status")) {
+                    String status = notificationObject.getString("status");
+                    if (status.equals("pending")) {
+                        addNewNotification(id, username);
+                    }
+                } else {
+                    // If no status is present, handle it as pending by default
+                    addNewNotification(id, username);
+                }
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando notificações", e.toString());
+        }
     }
+
+    private void addNewNotification(String id, String username) {
+        LinearLayout notification = new LinearLayout(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(16, 32, 16, 0); // Double the margin between notifications
+        notification.setLayoutParams(layoutParams);
+        notification.setOrientation(LinearLayout.VERTICAL);
+        notification.setPadding(32, 40, 32, 40);
+        notification.setElevation(4);
+        notification.setBackgroundResource(R.drawable.rounded_border);
+
+        TextView notificationName = new TextView(this);
+        notificationName.setText(username);
+        notificationName.setTextSize(18);
+        notificationName.setTextColor(getResources().getColor(R.color.black, null));
+
+        LinearLayout buttonLayout = new LinearLayout(this);
+        buttonLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+        buttonLayout.setGravity(android.view.Gravity.END);
+
+        Button acceptButton = new Button(this);
+        acceptButton.setText("Aceitar");
+        acceptButton.setTextColor(getResources().getColor(android.R.color.white, null));
+        acceptButton.setBackgroundTintList(getResources().getColorStateList(R.color.green, null));
+        LinearLayout.LayoutParams acceptButtonParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        acceptButtonParams.setMarginStart(8);
+        acceptButton.setLayoutParams(acceptButtonParams);
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("user id", userId);
+                Log.i("id", id);
+                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s", id, userId);
+                String response = makePutRequest(url);
+                Log.i("AcceptResponse", response);
+                loadNotifications(); // Reload notifications
+            }
+        });
+
+        Button rejectButton = new Button(this);
+        rejectButton.setText("Rejeitar");
+        rejectButton.setTextColor(getResources().getColor(android.R.color.white, null));
+        rejectButton.setBackgroundTintList(getResources().getColorStateList(R.color.red, null));
+        LinearLayout.LayoutParams rejectButtonParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        rejectButtonParams.setMarginStart(8);
+        rejectButton.setLayoutParams(rejectButtonParams);
+        rejectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("Notification", "Invitation denied");
+                loadNotifications(); // Reload notifications
+            }
+        });
+
+        buttonLayout.addView(rejectButton);
+        buttonLayout.addView(acceptButton);
+
+        notification.addView(notificationName);
+        notification.addView(buttonLayout);
+        notificationsSection.addView(notification, 0); // Add the new notification at the top of the list
+    }
+
 
     private void addNewKn(String id, String name) {
         // todo
