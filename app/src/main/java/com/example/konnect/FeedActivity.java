@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.widget.Toast;
+import android.view.Gravity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,6 +37,7 @@ public class FeedActivity extends AppCompatActivity {
     private EditText searchBar;
     private String username;
     private String userId;
+    private String currentGroupId = null;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -74,6 +76,8 @@ public class FeedActivity extends AppCompatActivity {
                 showSection(feedSection);
                 grauButtonsContainer.setVisibility(View.VISIBLE);
                 header.setGroupName(null);
+                currentGroupId = null;
+                loadPosts(); // Refresh the post list
             }
         });
 
@@ -82,6 +86,7 @@ public class FeedActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setActiveTab(navGroups);
                 showSection(groupsSection);
+                loadGroups();
             }
         });
 
@@ -90,6 +95,7 @@ public class FeedActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setActiveTab(navNotifications);
                 showSection(notificationsSection);
+                loadNotifications();
             }
         });
 
@@ -162,8 +168,13 @@ public class FeedActivity extends AppCompatActivity {
                     return;
                 }
 
-                String url = "http://10.0.2.2:8080/server_war_exploded/api/post" ;
-                String body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, userId, "null");
+                String url = "http://10.0.2.2:8080/server_war_exploded/api/post";
+                String body;
+                if (currentGroupId != null) {
+                    body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, userId, currentGroupId);
+                } else {
+                    body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"null\"}", postMessage, userId);
+                }
 
                 String response = makePostRequest(url, body);
                 Log.i("response", response);
@@ -188,6 +199,20 @@ public class FeedActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.i("Error post button", e.toString());
                 }
+
+                postContent.setText("");
+            }
+        });
+
+        navFeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navFeed);
+                showSection(feedSection);
+                grauButtonsContainer.setVisibility(View.VISIBLE);
+                header.setGroupName(null);
+                currentGroupId = null;
+                loadPosts(); // Refresh the post list
             }
         });
 
@@ -370,20 +395,35 @@ public class FeedActivity extends AppCompatActivity {
             String message = jsonObject.getString("message");
             JSONArray jsonArray = new JSONArray(message);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject notificationObject = jsonArray.getJSONObject(i);
-                String id = notificationObject.getString("id");
-                String username = notificationObject.getString("username");
+            if (jsonArray.length() == 0) {
+                TextView noNotificationsView = new TextView(this);
+                noNotificationsView.setText("Nenhuma notificação por enquanto");
+                noNotificationsView.setTextSize(18);
+                noNotificationsView.setTextColor(getResources().getColor(R.color.gray));
+                noNotificationsView.setGravity(Gravity.CENTER);
+                noNotificationsView.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                ));
+                int paddingInDp = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
+                noNotificationsView.setPadding(paddingInDp, 0, paddingInDp, 0);
+                notificationsSection.addView(noNotificationsView);
+            } else {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject notificationObject = jsonArray.getJSONObject(i);
+                    String id = notificationObject.getString("id");
+                    String username = notificationObject.getString("username");
 
-                // Check if status exists before accessing it
-                if (notificationObject.has("status")) {
-                    String status = notificationObject.getString("status");
-                    if (status.equals("pending")) {
+                    // Check if status exists before accessing it
+                    if (notificationObject.has("status")) {
+                        String status = notificationObject.getString("status");
+                        if (status.equals("pending")) {
+                            addNewNotification(id, username);
+                        }
+                    } else {
+                        // If no status is present, handle it as pending by default
                         addNewNotification(id, username);
                     }
-                } else {
-                    // If no status is present, handle it as pending by default
-                    addNewNotification(id, username);
                 }
             }
         } catch (Exception e) {
@@ -427,33 +467,33 @@ public class FeedActivity extends AppCompatActivity {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("user id", userId);
-                Log.i("id", id);
-                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s", id, userId);
+                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s&action=accept", id, userId);
                 String response = makePutRequest(url);
                 Log.i("AcceptResponse", response);
                 loadNotifications(); // Reload notifications
             }
         });
 
-        Button rejectButton = new Button(this);
-        rejectButton.setText("Rejeitar");
-        rejectButton.setTextColor(getResources().getColor(android.R.color.white, null));
-        rejectButton.setBackgroundTintList(getResources().getColorStateList(R.color.red, null));
-        LinearLayout.LayoutParams rejectButtonParams = new LinearLayout.LayoutParams(
+        Button deleteButton = new Button(this);
+        deleteButton.setText("Excluir");
+        deleteButton.setTextColor(getResources().getColor(android.R.color.white, null));
+        deleteButton.setBackgroundTintList(getResources().getColorStateList(R.color.red, null));
+        LinearLayout.LayoutParams deleteButtonParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        rejectButtonParams.setMarginStart(8);
-        rejectButton.setLayoutParams(rejectButtonParams);
-        rejectButton.setOnClickListener(new View.OnClickListener() {
+        deleteButtonParams.setMarginStart(8);
+        deleteButton.setLayoutParams(deleteButtonParams);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("Notification", "Invitation denied");
+                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s&action=delete", id, userId);
+                String response = makePutRequest(url);
+                Log.i("DeleteResponse", response);
                 loadNotifications(); // Reload notifications
             }
         });
 
-        buttonLayout.addView(rejectButton);
+        buttonLayout.addView(deleteButton);
         buttonLayout.addView(acceptButton);
 
         notification.addView(notificationName);
@@ -581,6 +621,7 @@ public class FeedActivity extends AppCompatActivity {
         showSection(feedSection);
         grauButtonsContainer.setVisibility(View.GONE);
         header.setGroupName(groupName);
+        currentGroupId = groupId;
         loadGroupPosts(groupId);
     }
 
