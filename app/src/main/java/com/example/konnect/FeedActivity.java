@@ -28,12 +28,14 @@ import org.json.JSONObject;
 public class FeedActivity extends AppCompatActivity {
 
     private Button navFeed, navGroups, navNotifications;
-    private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer;
+    private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer, feedListContainer, usersContainer;
     private ImageButton homeButton;
     private Button postButton;
     private EditText postContent;
-    private LinearLayout feedListContainer;
     private ComponentHeader header;
+    private EditText searchBar;
+    private String username;
+    private String userId;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -41,6 +43,8 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
+        username = getIntent().getStringExtra("username");
+        userId = getIntent().getStringExtra("userId");
         navFeed = findViewById(R.id.nav_feed);
         navGroups = findViewById(R.id.nav_groups);
         navNotifications = findViewById(R.id.nav_notifications);
@@ -49,6 +53,7 @@ public class FeedActivity extends AppCompatActivity {
         postContent = findViewById(R.id.content_input);
         searchBar = (EditText) findViewById(R.id.search_bar);
         feedListContainer = findViewById(R.id.feed_list_container);
+        usersContainer = findViewById(R.id.users_container);
         grauButtonsContainer = findViewById(R.id.grau_buttons_container);
         header = findViewById(R.id.header);
 
@@ -56,7 +61,9 @@ public class FeedActivity extends AppCompatActivity {
         groupsSection = findViewById(R.id.groups_section);
         notificationsSection = findViewById(R.id.notifications_section);
 
-        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", "3687c3a4-47c1-45fe-afc3-cf215d0bef91", "null");
+        header.setHeaderText(username);
+
+        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", userId, "null");
 
         String postsResponse = makeGetRequest(listPostsUrl);
         Log.i("abloble", postsResponse);
@@ -81,7 +88,7 @@ public class FeedActivity extends AppCompatActivity {
             Log.i("Erro listando posts", e.toString());
         }
 
-        String listNotificationsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userId=%s", "todo userid");
+        String listNotificationsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userId=%s", userId);
         String notificationsResponse = makeGetRequest(listNotificationsUrl);
 
         try {
@@ -100,7 +107,7 @@ public class FeedActivity extends AppCompatActivity {
             Log.i("Erro listando notificações", e.toString());
         }
 
-        String listKnsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/kn?userId=%s", "todo userid");
+        String listKnsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/kn?userId=%s", userId);
         String knsResponse = makeGetRequest(listKnsUrl);
 
         try {
@@ -156,26 +163,45 @@ public class FeedActivity extends AppCompatActivity {
         });
 
         searchBar.addTextChangedListener(new TextWatcher() {
-
             public void afterTextChanged(Editable s) {
-                String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", "todo", s.toString());
-                String usersResponse = makeGetRequest(listUsersUrl); 
-                Log.i("usersResponse", usersResponse);
-                try {
-                    JSONObject jsonObject = new JSONObject(usersResponse);
-                    String message = jsonObject.getString("message");
-                    JSONArray jsonArray = new JSONArray(message);
-        
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject knObject = jsonArray.getJSONObject(i);
-                        String id = knObject.getString("id");
-                        String username = knObject.getString("username");
-                        String status = knObject.getString("status");
+                String searchText = s.toString();
 
-                        // addNewConnection(id, name, status);
+                // Clear previous search results
+                usersContainer.removeAllViews();
+
+                if (searchText.isEmpty()) {
+                    grauButtonsContainer.setVisibility(View.VISIBLE);
+                    postContent.setVisibility(View.VISIBLE);
+                    postButton.setVisibility(View.VISIBLE);
+                    feedListContainer.setVisibility(View.VISIBLE);
+                    usersContainer.setVisibility(View.GONE);
+                } else {
+                    grauButtonsContainer.setVisibility(View.GONE);
+                    postContent.setVisibility(View.GONE);
+                    postButton.setVisibility(View.GONE);
+                    feedListContainer.setVisibility(View.GONE);
+                    usersContainer.setVisibility(View.VISIBLE);
+
+                    String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", userId, s);
+                    String usersResponse = makeGetRequest(listUsersUrl);
+                    Log.i("usersResponse", usersResponse);
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(usersResponse);
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = new JSONArray(message);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject knObject = jsonArray.getJSONObject(i);
+                            String id = knObject.getString("id");
+                            String username = knObject.getString("username");
+                            String status = knObject.getString("status");
+
+                            addNewConnection(id, username, status);
+                        }
+                    } catch (Exception e) {
+                        Log.i("Erro listando conexões", e.toString());
                     }
-                } catch (Exception e) {
-                    Log.i("Erro listando conexões", e.toString());
                 }
             }
 
@@ -196,25 +222,31 @@ public class FeedActivity extends AppCompatActivity {
                 }
 
                 String url = "http://10.0.2.2:8080/server_war_exploded/api/post" ;
-                String body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, "4c92f976-b7ab-4f67-8335-03b0695ead6f", "null");
+                String body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, userId, "null");
 
                 String response = makePostRequest(url, body);
                 Log.i("response", response);
 
-                if (!response.contains("__error__")) {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String id = jsonObject.getString("id");
-                    String content = jsonObject.getString("content");
-                    String userId = jsonObject.getString("userId");
-                    String knId = jsonObject.getString("knId");
-                    String username = "TODO";
-                    addNewPost(content, username, "0", "0", id);
-                    // finish();
-                    // startActivity(getIntent());
-                } else {
-                    Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
-                }
+                try {
+                    if (!response.contains("__error__")) {
+                        JSONObject jsonObject = new JSONObject(response);
+                        String message = jsonObject.getString("message");
+                        JSONObject userObject = new JSONObject(message);
 
+                        String id = userObject.getString("id");
+                        String content = userObject.getString("content");
+                        String userId = userObject.getString("userId");
+                        String knId = userObject.getString("knId");
+
+                        addNewPost(content, username, "0", "0", id);
+                        // finish();
+                        // startActivity(getIntent());
+                    } else {
+                        Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    Log.i("Error post button", e.toString());
+                }
             }
         });
 
@@ -359,24 +391,75 @@ public class FeedActivity extends AppCompatActivity {
         feedListContainer.addView(newPost, 0); // Add the new post at the top of the list
     }
 
-    private addNewNotification(String id, String username) {
+    private void addNewNotification(String id, String username) {
         // todo
         // ADD THIS AS LISTENER TO THE BUTTON ACCEPT
-        String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s", id, "todo userId");
+        String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s", id, userId);
         String response = makePutRequest(url);
     }
 
-    private addNewKn(String id, String name) {
+    private void addNewKn(String id, String name) {
         // todo
     }
 
-    private addNewConnection(String id, String name, String status) {
-        // todo
-        // ADD THIS AS LISTENER TO BUTTON FOLLOW
-        String inviteUrl = "http://10.0.2.2:8080/server_war_exploded/api/connection" ;
-        String body = String.format("{\"userFromId\":\"%s\", \"userToId\":\"%s\"}", "todo userid", id);
+    private void addNewConnection(String id, String name, String status) {
+        LinearLayout newUser = new LinearLayout(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(16, 32, 16, 0); // Double the margin between users
+        newUser.setLayoutParams(layoutParams);
+        newUser.setOrientation(LinearLayout.VERTICAL);
+        newUser.setPadding(32, 40, 32, 40);
+        newUser.setElevation(4);
+        newUser.setBackgroundResource(R.drawable.rounded_border);
 
-        String response = makePostRequest(inviteUrl, body);
+        TextView userName = new TextView(this);
+        userName.setText(name);
+        userName.setTextSize(18);
+        userName.setTextColor(getResources().getColor(R.color.black, null));
+
+        LinearLayout buttonLayout = new LinearLayout(this);
+        buttonLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+        buttonLayout.setGravity(android.view.Gravity.END);
+
+        View spacer = new View(this);
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        spacer.setLayoutParams(spacerParams);
+
+        Button followButton = new Button(this);
+        followButton.setText("SEGUIR");
+        followButton.setTextColor(getResources().getColor(android.R.color.white, null));
+        followButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
+        LinearLayout.LayoutParams followButtonParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        followButtonParams.setMarginStart(8);
+        followButton.setLayoutParams(followButtonParams);
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String inviteUrl = "http://10.0.2.2:8080/server_war_exploded/api/connection" ;
+                String body = String.format("{\"userFromId\":\"%s\", \"userToId\":\"%s\"}", userId, id);
+
+                String response = makePostRequest(inviteUrl, body);
+                if (response.contains("__error__")) {
+                    Toast.makeText(getBaseContext(), "Erro ao seguir usuário", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getBaseContext(), "Seguindo usuário", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        buttonLayout.addView(spacer);
+        buttonLayout.addView(followButton);
+
+        newUser.addView(userName);
+        newUser.addView(buttonLayout);
+        usersContainer.addView(newUser, 0); // Add the new user at the top of the list
     }
 
     private void openFeedWithGroup(String groupName) {

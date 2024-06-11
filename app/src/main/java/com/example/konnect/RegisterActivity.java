@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONObject;
+
 public class RegisterActivity extends AppCompatActivity {
     private Button loginButton;
     private Button registerButton;
@@ -43,16 +45,35 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = usernameInput.getText().toString();
                 String password = passwordInput.getText().toString();
 
+                if (username.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(RegisterActivity.this, "Por favor, preencha todos os campos", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 String url = "http://10.0.2.2:8080/server_war_exploded/api/user/register" ;
                 String body = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
 
                 String response = makePostRequest(url, body);
-                if (!response.contains("__error__")) {
-                    Intent intent = new Intent(RegisterActivity.this, FeedActivity.class);
-                    startActivity(intent);
-                    finish(); // Finish current activity
-                } else {
-                    Toast.makeText(getBaseContext(), "Erro no registro", Toast.LENGTH_LONG).show();
+                Log.i("RegisterResponse", response);
+
+                try {
+                    if (!response.contains("__error__")) {
+                        JSONObject jsonObject = new JSONObject(response);
+                        String message = jsonObject.getString("message");
+                        JSONObject userObject = new JSONObject(message);
+                        String userId = userObject.getString("id");
+                        String usernameResponse = userObject.getString("username");
+
+                        Intent intent = new Intent(RegisterActivity.this, FeedActivity.class);
+                        intent.putExtra("username", usernameResponse);
+                        intent.putExtra("userId", userId);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Erro no registro", Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    Log.i("RegisterError", e.toString());
                 }
             }
         });
