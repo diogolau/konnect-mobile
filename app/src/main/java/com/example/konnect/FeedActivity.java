@@ -90,6 +90,10 @@ public class FeedActivity extends AppCompatActivity {
         String connectionsResponse = makeGetRequest(listConnectionsUrl);
         Log.i("connectionsResponse", connectionsResponse);
 
+        String listUsersUrl = "http://10.0.2.2:8080/server_war_exploded/api/users";
+        String allUsersResponse = makeGetRequest(listUsersUrl);
+        Log.i("allUsersResponse", allUsersResponse);
+
         ArrayList<String> distinctUsernames = new ArrayList<>();
 
         try {
@@ -97,16 +101,16 @@ public class FeedActivity extends AppCompatActivity {
             String message = jsonObject.getString("message");
             JSONArray jsonArray = new JSONArray(message);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject connectionObject = jsonArray.getJSONObject(i);
-                String usernameTo = connectionObject.getString("usernameTo");
-                String usernameFrom = connectionObject.getString("usernameFrom");
+            JSONObject allUsersObject = new JSONObject(allUsersResponse);
+            String allUsersMessage = allUsersObject.getString("message");
+            JSONArray allUsersArray = new JSONArray(allUsersMessage);
 
-                if (!distinctUsernames.contains(usernameTo)) {
-                    distinctUsernames.add(usernameTo);
-                }
-                if (!distinctUsernames.contains(usernameFrom)) {
-                    distinctUsernames.add(usernameFrom);
+            for (int i = 0; i < allUsersArray.length(); i++) {
+                JSONObject connectionObject = allUsersArray.getJSONObject(i);
+                String username = connectionObject.getString("username");
+
+                if (!distinctUsernames.contains(username)) {
+                    distinctUsernames.add(username);
                 }
             }
             int len = distinctUsernames.size();
@@ -170,10 +174,10 @@ public class FeedActivity extends AppCompatActivity {
             }
 
             if (len == 5) {
-                graphView.addNode(distinctUsernames.get(0), 500, 525);
-                graphView.addNode(distinctUsernames.get(1), 266, 850);
-                graphView.addNode(distinctUsernames.get(2), 732, 850);
-                graphView.addNode(distinctUsernames.get(3), 500, 1175);
+                graphView.addNode(distinctUsernames.get(0), 820, 620);
+                graphView.addNode(distinctUsernames.get(1), 280, 1175);
+                graphView.addNode(distinctUsernames.get(2), 730, 1175);
+                graphView.addNode(distinctUsernames.get(3), 185, 620);
                 graphView.addNode(distinctUsernames.get(4), 500, 200);
 
                 for (int i = 0; i < jsonArray.length(); i++) {
