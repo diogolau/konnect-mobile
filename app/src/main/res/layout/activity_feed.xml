@@ -264,6 +264,27 @@
                 android:orientation="vertical"
                 android:visibility="gone">
             </LinearLayout>
+
+            <!-- Graph Section -->
+            <LinearLayout
+                android:id="@+id/graph_section"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Graph -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="600dp">
+
+                    <com.example.konnect.GraphView
+                        android:id="@+id/graphView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -306,6 +327,15 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/konnect_notif_white_32"
+            android:contentDescription="@string/nav_notifications" />
+
+        <ImageButton
+            android:id="@+id/nav_graph"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:src="@drawable/konnect_graph_white_32"
             android:contentDescription="@string/nav_notifications" />
     </LinearLayout>
 </LinearLayout>

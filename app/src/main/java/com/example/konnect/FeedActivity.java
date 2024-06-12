@@ -26,11 +26,13 @@ import android.view.Gravity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class FeedActivity extends AppCompatActivity {
 
-    private ImageButton navFeed, navGroups, navNotifications;
+    private ImageButton navFeed, navGroups, navNotifications, navGraph;
     private Button minGrauButton, maxGrauButton;
-    private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer, feedListContainer, usersContainer;
+    private LinearLayout feedSection, groupsSection, notificationsSection, graphSection, grauButtonsContainer, feedListContainer, usersContainer;
     private ImageButton homeButton;
     private Button postButton;
     private EditText postContent;
@@ -39,6 +41,7 @@ public class FeedActivity extends AppCompatActivity {
     private String username;
     private String userId;
     private String currentGroupId = null;
+    private GraphView graphView;
     int minGrau = 0;
     int maxGrau = 10;
 
@@ -53,6 +56,7 @@ public class FeedActivity extends AppCompatActivity {
         navFeed = findViewById(R.id.nav_feed);
         navGroups = findViewById(R.id.nav_groups);
         navNotifications = findViewById(R.id.nav_notifications);
+        navGraph = findViewById(R.id.nav_graph);
         homeButton = findViewById(R.id.header_home_button);
         postButton = findViewById(R.id.post_button);
         minGrauButton = findViewById(R.id.grau_min_button);
@@ -67,6 +71,7 @@ public class FeedActivity extends AppCompatActivity {
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
         notificationsSection = findViewById(R.id.notifications_section);
+        graphSection = findViewById(R.id.graph_section);
 
         header.setHeaderText(username);
 
@@ -76,6 +81,134 @@ public class FeedActivity extends AppCompatActivity {
         loadPosts();
         loadNotifications();
         loadGroups();
+
+        // Graph view
+
+        graphView = findViewById(R.id.graphView);
+
+        String listConnectionsUrl = "http://10.0.2.2:8080/server_war_exploded/api/graph";
+        String connectionsResponse = makeGetRequest(listConnectionsUrl);
+        Log.i("connectionsResponse", connectionsResponse);
+
+        ArrayList<String> distinctUsernames = new ArrayList<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(connectionsResponse);
+            String message = jsonObject.getString("message");
+            JSONArray jsonArray = new JSONArray(message);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject connectionObject = jsonArray.getJSONObject(i);
+                String usernameTo = connectionObject.getString("usernameTo");
+                String usernameFrom = connectionObject.getString("usernameFrom");
+
+                if (!distinctUsernames.contains(usernameTo)) {
+                    distinctUsernames.add(usernameTo);
+                }
+                if (!distinctUsernames.contains(usernameFrom)) {
+                    distinctUsernames.add(usernameFrom);
+                }
+            }
+            int len = distinctUsernames.size();
+            if (len == 1) {
+                graphView.addNode(distinctUsernames.get(0), 500, 850);
+            }
+            if (len == 2) {
+                graphView.addNode(distinctUsernames.get(0), 266, 850);
+                graphView.addNode(distinctUsernames.get(1), 732, 850);
+                graphView.addEdge(0, 1);
+            }
+            if (len == 3) {
+                graphView.addNode(distinctUsernames.get(0), 500, 633);
+                graphView.addNode(distinctUsernames.get(1), 266, 866);
+                graphView.addNode(distinctUsernames.get(2), 732, 866);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject connectionObject = jsonArray.getJSONObject(i);
+                    String usernameTo = connectionObject.getString("usernameTo");
+                    String usernameFrom = connectionObject.getString("usernameFrom");
+
+                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(1))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(1)))) {
+                        graphView.addEdge(0, 1);
+                    }
+                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(2))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(2)))) {
+                        graphView.addEdge(0, 2);
+                    }
+                    if ((usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(2))) ||
+                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(2)))) {
+                        graphView.addEdge(1, 2);
+                    }
+                }
+            }
+            if (len == 4) {
+                graphView.addNode(distinctUsernames.get(0), 500, 525);
+                graphView.addNode(distinctUsernames.get(1), 266, 850);
+                graphView.addNode(distinctUsernames.get(2), 732, 850);
+                graphView.addNode(distinctUsernames.get(3), 500, 1175);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject connectionObject = jsonArray.getJSONObject(i);
+                    String usernameTo = connectionObject.getString("usernameTo");
+                    String usernameFrom = connectionObject.getString("usernameFrom");
+
+                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(1))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(1))) ||
+                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(2))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(2))) ||
+                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(3))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(3))) ||
+                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(2))) ||
+                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(2))) ||
+                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(3))) ||
+                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(3)) ||
+                            (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(3))) ||
+                            (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(3))))) {
+                        graphView.addEdge(distinctUsernames.indexOf(usernameFrom), distinctUsernames.indexOf(usernameTo));
+                    }
+                }
+            }
+
+            if (len == 5) {
+                graphView.addNode(distinctUsernames.get(0), 500, 525);
+                graphView.addNode(distinctUsernames.get(1), 266, 850);
+                graphView.addNode(distinctUsernames.get(2), 732, 850);
+                graphView.addNode(distinctUsernames.get(3), 500, 1175);
+                graphView.addNode(distinctUsernames.get(4), 500, 200);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject connectionObject = jsonArray.getJSONObject(i);
+                    String usernameTo = connectionObject.getString("usernameTo");
+                    String usernameFrom = connectionObject.getString("usernameFrom");
+
+                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(1))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(1))) ||
+                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(2))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(2))) ||
+                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(3))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(3))) ||
+                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(4))) ||
+                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(4))) ||
+                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(2))) ||
+                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(2))) ||
+                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(3))) ||
+                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(3))) ||
+                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(4))) ||
+                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(4))) ||
+                            (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(3))) ||
+                            (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(3))) ||
+                            (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(4))) ||
+                            (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(4))) ||
+                            (usernameTo.equals(distinctUsernames.get(3)) && usernameFrom.equals(distinctUsernames.get(4))) ||
+                            (usernameFrom.equals(distinctUsernames.get(3)) && usernameTo.equals(distinctUsernames.get(4)))) {
+                        graphView.addEdge(distinctUsernames.indexOf(usernameFrom), distinctUsernames.indexOf(usernameTo));
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            Log.i("Erro listando conexões", e.toString());
+        }
 
         navFeed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +237,14 @@ public class FeedActivity extends AppCompatActivity {
                 setActiveTab();
                 showSection(notificationsSection);
                 loadNotifications();
+            }
+        });
+
+        navGraph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab();
+                showSection(graphSection);
             }
         });
 
@@ -247,12 +388,14 @@ public class FeedActivity extends AppCompatActivity {
         navFeed.setBackgroundResource(0);
         navGroups.setBackgroundResource(0);
         navNotifications.setBackgroundResource(0);
+        navGraph.setBackgroundResource(0);
     }
 
     private void showSection(LinearLayout section) {
         feedSection.setVisibility(section == feedSection ? View.VISIBLE : View.GONE);
         groupsSection.setVisibility(section == groupsSection ? View.VISIBLE : View.GONE);
         notificationsSection.setVisibility(section == notificationsSection ? View.VISIBLE : View.GONE);
+        graphSection.setVisibility(section == graphSection ? View.VISIBLE : View.GONE);
     }
 
     private void loadPosts() {
