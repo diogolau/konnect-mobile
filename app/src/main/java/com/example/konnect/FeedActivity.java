@@ -15,6 +15,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +29,7 @@ import org.json.JSONObject;
 
 public class FeedActivity extends AppCompatActivity {
 
-    private Button navFeed, navGroups, navNotifications;
+    private Button navFeed, navGroups, navNotifications, minGrauButton, maxGrauButton;
     private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer, feedListContainer, usersContainer;
     private ImageButton homeButton;
     private Button postButton;
@@ -38,6 +39,8 @@ public class FeedActivity extends AppCompatActivity {
     private String username;
     private String userId;
     private String currentGroupId = null;
+    int minGrau = 0;
+    int maxGrau = 10;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -52,6 +55,8 @@ public class FeedActivity extends AppCompatActivity {
         navNotifications = findViewById(R.id.nav_notifications);
         homeButton = findViewById(R.id.header_home_button);
         postButton = findViewById(R.id.post_button);
+        minGrauButton = findViewById(R.id.grau_min_button);
+        maxGrauButton = findViewById(R.id.grau_max_button);
         postContent = findViewById(R.id.content_input);
         searchBar = (EditText) findViewById(R.id.search_bar);
         feedListContainer = findViewById(R.id.feed_list_container);
@@ -64,6 +69,9 @@ public class FeedActivity extends AppCompatActivity {
         notificationsSection = findViewById(R.id.notifications_section);
 
         header.setHeaderText(username);
+
+        minGrauButton.setText("Grau mínimo: " + minGrau);
+        maxGrauButton.setText("Grau máximo: " + maxGrau);
 
         loadPosts();
         loadNotifications();
@@ -113,43 +121,7 @@ public class FeedActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String searchText = s.toString();
 
-                // Clear previous search results
-                usersContainer.removeAllViews();
-
-                if (searchText.isEmpty()) {
-                    grauButtonsContainer.setVisibility(View.VISIBLE);
-                    postContent.setVisibility(View.VISIBLE);
-                    postButton.setVisibility(View.VISIBLE);
-                    feedListContainer.setVisibility(View.VISIBLE);
-                    usersContainer.setVisibility(View.GONE);
-                } else {
-                    grauButtonsContainer.setVisibility(View.GONE);
-                    postContent.setVisibility(View.GONE);
-                    postButton.setVisibility(View.GONE);
-                    feedListContainer.setVisibility(View.GONE);
-                    usersContainer.setVisibility(View.VISIBLE);
-
-                    String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", userId, s);
-                    String usersResponse = makeGetRequest(listUsersUrl);
-                    Log.i("usersResponse", usersResponse);
-
-                    try {
-                        JSONObject jsonObject = new JSONObject(usersResponse);
-                        String message = jsonObject.getString("message");
-                        JSONArray jsonArray = new JSONArray(message);
-
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject knObject = jsonArray.getJSONObject(i);
-                            String id = knObject.getString("id");
-                            String username = knObject.getString("username");
-                            String status = knObject.getString("status");
-
-                            addNewConnection(id, username, status);
-                        }
-                    } catch (Exception e) {
-                        Log.i("Erro listando conexões", e.toString());
-                    }
-                }
+                loadUsers(searchText);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -169,12 +141,7 @@ public class FeedActivity extends AppCompatActivity {
                 }
 
                 String url = "http://10.0.2.2:8080/server_war_exploded/api/post";
-                String body;
-                if (currentGroupId != null) {
-                    body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, userId, currentGroupId);
-                } else {
-                    body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"null\"}", postMessage, userId);
-                }
+                String body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, userId, currentGroupId != null ? currentGroupId : "null");
 
                 String response = makePostRequest(url, body);
                 Log.i("response", response);
@@ -221,19 +188,59 @@ public class FeedActivity extends AppCompatActivity {
         showSection(feedSection);
 
         // Grau Minimo and Grau Maximo Buttons
-        findViewById(R.id.grau_min_button).setOnClickListener(new View.OnClickListener() {
+        minGrauButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showNumberPickerDialog((Button) v, "Grau Mínimo");
             }
         });
 
-        findViewById(R.id.grau_max_button).setOnClickListener(new View.OnClickListener() {
+        maxGrauButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showNumberPickerDialog((Button) v, "Grau Máximo");
             }
         });
+    }
+
+    private void loadUsers(String searchText) {
+        // Clear previous search results
+        usersContainer.removeAllViews();
+
+        if (searchText.isEmpty()) {
+            grauButtonsContainer.setVisibility(View.VISIBLE);
+            postContent.setVisibility(View.VISIBLE);
+            postButton.setVisibility(View.VISIBLE);
+            feedListContainer.setVisibility(View.VISIBLE);
+            usersContainer.setVisibility(View.GONE);
+        } else {
+            grauButtonsContainer.setVisibility(View.GONE);
+            postContent.setVisibility(View.GONE);
+            postButton.setVisibility(View.GONE);
+            feedListContainer.setVisibility(View.GONE);
+            usersContainer.setVisibility(View.VISIBLE);
+
+            String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", userId, searchText);
+            String usersResponse = makeGetRequest(listUsersUrl);
+            Log.i("usersResponse", usersResponse);
+
+            try {
+                JSONObject jsonObject = new JSONObject(usersResponse);
+                String message = jsonObject.getString("message");
+                JSONArray jsonArray = new JSONArray(message);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject knObject = jsonArray.getJSONObject(i);
+                    String id = knObject.getString("id");
+                    String username = knObject.getString("username");
+                    String status = knObject.getString("status");
+
+                    addNewConnection(id, username, status);
+                }
+            } catch (Exception e) {
+                Log.i("Erro listando conexões", e.toString());
+            }
+        }
     }
 
     private void setActiveTab(Button activeButton) {
@@ -252,7 +259,7 @@ public class FeedActivity extends AppCompatActivity {
         // Clear post list
         feedListContainer.removeAllViews();
 
-        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", userId, "null");
+        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", minGrau, maxGrau, userId, currentGroupId != null ? currentGroupId : "null");
 
         String postsResponse = makeGetRequest(listPostsUrl);
         Log.i("abloble", postsResponse);
@@ -588,10 +595,10 @@ public class FeedActivity extends AppCompatActivity {
             followButton.setTextColor(getResources().getColor(R.color.white, null));
             followButton.setBackgroundTintList(getResources().getColorStateList(R.color.gray, null));
             followButton.setEnabled(false);
-        } else if (status.equals("accepted")) {
+        } else if (status.equals("active")) {
             followButton.setText("Seguindo");
-            followButton.setTextColor(getResources().getColor(R.color.white, null));
-            followButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
+            followButton.setTextColor(getResources().getColor(R.color.primary, null));
+            followButton.setBackgroundTintList(getResources().getColorStateList(R.color.secondary, null));
             followButton.setEnabled(false);
         } else {
             followButton.setText("Seguir");
@@ -614,6 +621,9 @@ public class FeedActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "Erro ao seguir usuário", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getBaseContext(), "Seguindo usuário", Toast.LENGTH_LONG).show();
+
+                    String searchText = searchBar.getText().toString();
+                    loadUsers(searchText); // Reload users
                 }
             }
         });
@@ -637,7 +647,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private void loadGroupPosts(String groupId) {
         feedListContainer.removeAllViews();
-        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "1", "10", userId, groupId);
+        String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "0", "10", userId, groupId);
 
         String postsResponse = makeGetRequest(listPostsUrl);
         Log.i("abloble", postsResponse);
@@ -676,6 +686,13 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 button.setText(title + ": " + numbers[which]);
+                if (title.equals("Grau Mínimo")) {
+                    minGrau = which;
+                } else {
+                    maxGrau = which;
+                }
+
+                loadPosts(); // Reload posts
             }
         });
 

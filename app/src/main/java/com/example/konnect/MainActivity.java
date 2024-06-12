@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         Button enterButton = findViewById(R.id.button);
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
