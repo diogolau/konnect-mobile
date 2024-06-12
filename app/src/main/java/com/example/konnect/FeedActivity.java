@@ -15,7 +15,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +28,8 @@ import org.json.JSONObject;
 
 public class FeedActivity extends AppCompatActivity {
 
-    private Button navFeed, navGroups, navNotifications, minGrauButton, maxGrauButton;
+    private ImageButton navFeed, navGroups, navNotifications;
+    private Button minGrauButton, maxGrauButton;
     private LinearLayout feedSection, groupsSection, notificationsSection, grauButtonsContainer, feedListContainer, usersContainer;
     private ImageButton homeButton;
     private Button postButton;
@@ -80,7 +80,7 @@ public class FeedActivity extends AppCompatActivity {
         navFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab(navFeed);
+                setActiveTab();
                 showSection(feedSection);
                 grauButtonsContainer.setVisibility(View.VISIBLE);
                 header.setGroupName(null);
@@ -92,7 +92,7 @@ public class FeedActivity extends AppCompatActivity {
         navGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab(navGroups);
+                setActiveTab();
                 showSection(groupsSection);
                 loadGroups();
             }
@@ -101,7 +101,7 @@ public class FeedActivity extends AppCompatActivity {
         navNotifications.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab(navNotifications);
+                setActiveTab();
                 showSection(notificationsSection);
                 loadNotifications();
             }
@@ -174,7 +174,7 @@ public class FeedActivity extends AppCompatActivity {
         navFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab(navFeed);
+                setActiveTab();
                 showSection(feedSection);
                 grauButtonsContainer.setVisibility(View.VISIBLE);
                 header.setGroupName(null);
@@ -184,7 +184,7 @@ public class FeedActivity extends AppCompatActivity {
         });
 
         // Default to Feed tab
-        setActiveTab(navFeed);
+        setActiveTab();
         showSection(feedSection);
 
         // Grau Minimo and Grau Maximo Buttons
@@ -243,10 +243,10 @@ public class FeedActivity extends AppCompatActivity {
         }
     }
 
-    private void setActiveTab(Button activeButton) {
-        navFeed.setTypeface(null, navFeed == activeButton ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
-        navGroups.setTypeface(null, navGroups == activeButton ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
-        navNotifications.setTypeface(null, navNotifications == activeButton ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
+    private void setActiveTab() {
+        navFeed.setBackgroundResource(0);
+        navGroups.setBackgroundResource(0);
+        navNotifications.setBackgroundResource(0);
     }
 
     private void showSection(LinearLayout section) {
@@ -295,17 +295,39 @@ public class FeedActivity extends AppCompatActivity {
             String message = jsonObject.getString("message");
             JSONArray jsonArray = new JSONArray(message);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject knObject = jsonArray.getJSONObject(i);
-                String id = knObject.getString("id");
-                String name = knObject.getString("name");
+            if (jsonArray.length() == 0) {
+                LinearLayout noGroupsLayout = new LinearLayout(this);
+                noGroupsLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT));
+                noGroupsLayout.setGravity(Gravity.CENTER);
+                noGroupsLayout.setOrientation(LinearLayout.VERTICAL);
 
-                addNewKn(id, name);
+                TextView noGroupsView = new TextView(this);
+                noGroupsView.setText("Nenhum grupo encontrado");
+                noGroupsView.setTextSize(18);
+                noGroupsView.setTextColor(getResources().getColor(R.color.gray));
+                noGroupsView.setGravity(Gravity.CENTER);
+
+                int paddingInDp = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
+                noGroupsView.setPadding(paddingInDp, 0, paddingInDp, 0);
+
+                noGroupsLayout.addView(noGroupsView);
+                groupsSection.addView(noGroupsLayout);
+            } else {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject knObject = jsonArray.getJSONObject(i);
+                    String id = knObject.getString("id");
+                    String name = knObject.getString("name");
+
+                    addNewKn(id, name);
+                }
             }
         } catch (Exception e) {
             Log.i("Erro listando grupos", e.toString());
         }
     }
+
 
     private void addNewPost(String content, String userNameContent, String upvotesContent, String downvotesContent, String postId) {
         LinearLayout newPost = new LinearLayout(this);
@@ -413,18 +435,24 @@ public class FeedActivity extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray(message);
 
             if (jsonArray.length() == 0) {
+                LinearLayout noNotificationsLayout = new LinearLayout(this);
+                noNotificationsLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT));
+                noNotificationsLayout.setGravity(Gravity.CENTER);
+                noNotificationsLayout.setOrientation(LinearLayout.VERTICAL);
+
                 TextView noNotificationsView = new TextView(this);
                 noNotificationsView.setText("Nenhuma notificação por enquanto");
                 noNotificationsView.setTextSize(18);
                 noNotificationsView.setTextColor(getResources().getColor(R.color.gray));
                 noNotificationsView.setGravity(Gravity.CENTER);
-                noNotificationsView.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
+
                 int paddingInDp = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
                 noNotificationsView.setPadding(paddingInDp, 0, paddingInDp, 0);
-                notificationsSection.addView(noNotificationsView);
+
+                noNotificationsLayout.addView(noNotificationsView);
+                notificationsSection.addView(noNotificationsLayout);
             } else {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject notificationObject = jsonArray.getJSONObject(i);
@@ -447,6 +475,7 @@ public class FeedActivity extends AppCompatActivity {
             Log.i("Erro listando notificações", e.toString());
         }
     }
+
 
     private void addNewNotification(String id, String username) {
         LinearLayout notification = new LinearLayout(this);
@@ -637,7 +666,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void openFeedWithGroup(String groupName, String groupId) {
-        setActiveTab(navFeed);
+        setActiveTab();
         showSection(feedSection);
         grauButtonsContainer.setVisibility(View.GONE);
         header.setGroupName(groupName);
