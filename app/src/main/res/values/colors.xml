@@ -5,6 +5,7 @@
     <color name="blue_white">#F9F9FA</color>
     <color name="gray">#4b5563</color> <!-- Gray color for text -->
     <color name="primary">#4464AD</color>
+    <color name="primary_50">#806200EE</color>
     <color name="secondary">#B6C3E2</color>
     <color name="green">#57965c</color> <!-- Gray color for accept button bg -->
     <color name="red">#cb4c4c</color> <!-- Red color for reject button bg -->

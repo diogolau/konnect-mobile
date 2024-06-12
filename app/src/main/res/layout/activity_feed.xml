@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp">
 
         <LinearLayout
             android:id="@+id/body_container"
@@ -44,7 +46,9 @@
                     android:background="@drawable/rounded_border"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:drawableStart="@drawable/konnect_search"
+                    android:drawablePadding="12dp"/>
 
                 <LinearLayout
                     android:id="@+id/grau_buttons_container"
@@ -88,12 +92,18 @@
                     android:layout_marginBottom="8dp"
                     android:inputType="text"/>
 
-                <Button
-                    android:id="@+id/post_button"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/primary"
-                    android:text="Postar" />
+                    android:gravity="end">
+
+                    <Button
+                        android:id="@+id/post_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/primary"
+                        android:text="Postar" />
+                </LinearLayout>
 
                 <!-- Post List -->
                 <LinearLayout
@@ -263,36 +273,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/primary">
+        android:paddingVertical="10dp"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:showDividers="middle"
+        android:divider="?android:attr/dividerVertical"
+        android:background="@color/primary"
+        android:dividerPadding="8dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/nav_feed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Feed"
-            android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:textStyle="normal" />
+            android:src="@drawable/konnect_house_white_32"
+            android:contentDescription="@string/nav_feed" />
 
-        <Button
+        <ImageButton
             android:id="@+id/nav_groups"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Grupos"
-            android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:textStyle="normal" />
+            android:src="@drawable/konnect_group_white_32"
+            android:contentDescription="@string/nav_groups" />
 
-        <Button
+        <ImageButton
             android:id="@+id/nav_notifications"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Notificações"
-            android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:textStyle="normal" />
+            android:src="@drawable/konnect_notif_white_32"
+            android:contentDescription="@string/nav_notifications" />
     </LinearLayout>
 </LinearLayout>
