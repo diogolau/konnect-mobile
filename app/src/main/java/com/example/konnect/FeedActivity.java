@@ -32,7 +32,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private ImageButton navFeed, navGroups, navNotifications, navGraph;
     private Button minGrauButton, maxGrauButton;
-    private LinearLayout feedSection, groupsSection, notificationsSection, graphSection, grauButtonsContainer, feedListContainer, usersContainer;
+    private LinearLayout feedSection, groupsSection, groupsListContainer, notificationsSection, graphSection, grauButtonsContainer, feedListContainer, usersContainer;
     private ImageButton homeButton;
     private Button postButton;
     private EditText postContent;
@@ -70,6 +70,7 @@ public class FeedActivity extends AppCompatActivity {
 
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
+        groupsListContainer = findViewById(R.id.groups_list_container);
         notificationsSection = findViewById(R.id.notifications_section);
         graphSection = findViewById(R.id.graph_section);
 
@@ -433,7 +434,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadGroups() {
-        groupsSection.removeAllViews();
+        groupsListContainer.removeAllViews();
         String listKnsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/kn?userId=%s", userId);
         String knsResponse = makeGetRequest(listKnsUrl);
 
@@ -460,7 +461,7 @@ public class FeedActivity extends AppCompatActivity {
                 noGroupsView.setPadding(paddingInDp, 0, paddingInDp, 0);
 
                 noGroupsLayout.addView(noGroupsView);
-                groupsSection.addView(noGroupsLayout);
+                groupsListContainer.addView(noGroupsLayout);
             } else {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject knObject = jsonArray.getJSONObject(i);
@@ -734,7 +735,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
-        groupsSection.addView(groupBox);
+        groupsListContainer.addView(groupBox);
     }
 
     private void addNewConnection(String id, String name, String status) {
