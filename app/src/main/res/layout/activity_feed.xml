@@ -142,7 +142,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/groups_title"
-                    android:textSize="28sp"
+                    android:textSize="24sp"
                     android:textColor="@color/primary"
                     android:layout_marginTop="8dp"
                     android:layout_gravity="center"/>
@@ -153,7 +153,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="16dp">
                 </LinearLayout>
             </LinearLayout>
 
@@ -164,6 +164,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
+
+                <!-- Title of the Notifications page -->
+                <TextView
+                    android:id="@+id/notifications_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notifications_title"
+                    android:textSize="24sp"
+                    android:textColor="@color/primary"
+                    android:layout_marginTop="8dp"
+                    android:layout_gravity="center"/>
+
+                <!-- Notifications List -->
+                <LinearLayout
+                    android:id="@+id/notifications_list_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp">
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Graph Section -->

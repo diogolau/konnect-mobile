@@ -34,7 +34,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private ImageButton navFeed, navGroups, navNotifications, navGraph;
     private Button minGrauButton, maxGrauButton;
-    private LinearLayout feedSection, groupsSection, groupsListContainer, notificationsSection, graphSection, grauButtonsContainer, feedListContainer, usersContainer;
+    private LinearLayout feedSection, groupsSection, groupsListContainer, notificationsSection, notificationsListContainer, graphSection, grauButtonsContainer, feedListContainer, usersContainer;
     private ImageButton homeButton;
     private Button postButton;
     private EditText postContent;
@@ -77,6 +77,7 @@ public class FeedActivity extends AppCompatActivity {
         groupsSection = findViewById(R.id.groups_section);
         groupsListContainer = findViewById(R.id.groups_list_container);
         notificationsSection = findViewById(R.id.notifications_section);
+        notificationsListContainer = findViewById(R.id.notifications_list_container);
         graphSection = findViewById(R.id.graph_section);
 
         header.setHeaderText(username);
@@ -582,7 +583,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadNotifications() {
-        notificationsSection.removeAllViews();
+        notificationsListContainer.removeAllViews();
         String listNotificationsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userId=%s", userId);
         String notificationsResponse = makeGetRequest(listNotificationsUrl);
 
@@ -609,7 +610,7 @@ public class FeedActivity extends AppCompatActivity {
                 noNotificationsView.setPadding(paddingInDp, 0, paddingInDp, 0);
 
                 noNotificationsLayout.addView(noNotificationsView);
-                notificationsSection.addView(noNotificationsLayout);
+                notificationsListContainer.addView(noNotificationsLayout);
             } else {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject notificationObject = jsonArray.getJSONObject(i);
@@ -681,7 +682,7 @@ public class FeedActivity extends AppCompatActivity {
 
         notification.addView(notificationName);
         notification.addView(buttonLayout);
-        notificationsSection.addView(notification, 0); // Add the new notification at the top of the list
+        notificationsListContainer.addView(notification, 0); // Add the new notification at the top of the list
     }
 
 
