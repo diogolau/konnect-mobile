@@ -34,7 +34,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private ImageButton navFeed, navGroups, navNotifications, navGraph;
     private Button minGrauButton, maxGrauButton;
-    private LinearLayout feedSection, groupsSection, groupsListContainer, notificationsSection, notificationsListContainer, graphSection, grauButtonsContainer, feedListContainer, usersContainer;
+    private LinearLayout feedSection, groupsSection, groupsListContainer, notificationsSection, notificationsListContainer, graphSection, grauButtonsContainer, feedListContainer, usersContainer, navFeedContainer, navGroupsContainer, navNotificationsContainer, navGraphContainer;
     private ImageButton homeButton;
     private Button postButton;
     private EditText postContent;
@@ -47,6 +47,7 @@ public class FeedActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     int minGrau = 0;
     int maxGrau = 10;
+    private View navFeedIndicator, navGroupsIndicator, navNotificationsIndicator, navGraphIndicator;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -60,12 +61,16 @@ public class FeedActivity extends AppCompatActivity {
         navGroups = findViewById(R.id.nav_groups);
         navNotifications = findViewById(R.id.nav_notifications);
         navGraph = findViewById(R.id.nav_graph);
+        navFeedContainer = findViewById(R.id.nav_feed_container);
+        navGroupsContainer = findViewById(R.id.nav_groups_container);
+        navNotificationsContainer = findViewById(R.id.nav_notifications_container);
+        navGraphContainer = findViewById(R.id.nav_graph_container);
         homeButton = findViewById(R.id.header_home_button);
         postButton = findViewById(R.id.post_button);
         minGrauButton = findViewById(R.id.grau_min_button);
         maxGrauButton = findViewById(R.id.grau_max_button);
         postContent = findViewById(R.id.content_input);
-        searchBar = (EditText) findViewById(R.id.search_bar);
+        searchBar = findViewById(R.id.search_bar);
         feedListContainer = findViewById(R.id.feed_list_container);
         usersContainer = findViewById(R.id.users_container);
         grauButtonsContainer = findViewById(R.id.grau_buttons_container);
@@ -79,6 +84,11 @@ public class FeedActivity extends AppCompatActivity {
         notificationsSection = findViewById(R.id.notifications_section);
         notificationsListContainer = findViewById(R.id.notifications_list_container);
         graphSection = findViewById(R.id.graph_section);
+
+        navFeedIndicator = findViewById(R.id.nav_feed_indicator);
+        navGroupsIndicator = findViewById(R.id.nav_groups_indicator);
+        navNotificationsIndicator = findViewById(R.id.nav_notifications_indicator);
+        navGraphIndicator = findViewById(R.id.nav_graph_indicator);
 
         header.setHeaderText(username);
 
@@ -173,8 +183,8 @@ public class FeedActivity extends AppCompatActivity {
                             (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(2))) ||
                             (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(3))) ||
                             (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(3)) ||
-                            (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(3))) ||
-                            (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(3))))) {
+                                    (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(3))) ||
+                                    (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(3))))) {
                         graphView.addEdge(distinctUsernames.indexOf(usernameFrom), distinctUsernames.indexOf(usernameTo));
                     }
                 }
@@ -221,10 +231,10 @@ public class FeedActivity extends AppCompatActivity {
             Log.i("Erro listando conexões", e.toString());
         }
 
-        navFeed.setOnClickListener(new View.OnClickListener() {
+        navFeedContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navFeed);
                 showSection(feedSection);
                 grauButtonsContainer.setVisibility(View.VISIBLE);
                 header.setGroupName(null);
@@ -233,28 +243,104 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
+        navFeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navFeed);
+                showSection(feedSection);
+                grauButtonsContainer.setVisibility(View.VISIBLE);
+                header.setGroupName(null);
+                currentGroupId = null;
+                loadPosts(); // Refresh the post list
+            }
+        });
+
+        navFeedIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navFeed);
+                showSection(feedSection);
+                grauButtonsContainer.setVisibility(View.VISIBLE);
+                header.setGroupName(null);
+                currentGroupId = null;
+                loadPosts(); // Refresh the post list
+            }
+        });
+
+        navGroupsContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGroups);
+                showSection(groupsSection);
+                loadGroups();
+            }
+        });
+
         navGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navGroups);
                 showSection(groupsSection);
                 loadGroups();
+            }
+        });
+
+        navGroupsIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGroups);
+                showSection(groupsSection);
+                loadGroups();
+            }
+        });
+
+        navNotificationsContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navNotifications);
+                showSection(notificationsSection);
+                loadNotifications();
             }
         });
 
         navNotifications.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navNotifications);
                 showSection(notificationsSection);
                 loadNotifications();
+            }
+        });
+
+        navNotificationsIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navNotifications);
+                showSection(notificationsSection);
+                loadNotifications();
+            }
+        });
+
+        navGraphContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGraph);
+                showSection(graphSection);
             }
         });
 
         navGraph.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navGraph);
+                showSection(graphSection);
+            }
+        });
+
+        navGraphIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGraph);
                 showSection(graphSection);
             }
         });
@@ -276,12 +362,10 @@ public class FeedActivity extends AppCompatActivity {
         searchBar.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 String searchText = s.toString();
-
                 loadUsers(searchText);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
@@ -290,7 +374,6 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String postMessage = postContent.getText().toString();
-
                 if (postMessage.isEmpty()) {
                     Toast.makeText(getBaseContext(), "Escreva a sua mensagem", Toast.LENGTH_LONG).show();
                     return;
@@ -298,7 +381,6 @@ public class FeedActivity extends AppCompatActivity {
 
                 String url = "http://10.0.2.2:8080/server_war_exploded/api/post";
                 String body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, userId, currentGroupId != null ? currentGroupId : "null");
-
                 String response = makePostRequest(url, body);
                 Log.i("response", response);
 
@@ -307,43 +389,26 @@ public class FeedActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(response);
                         String message = jsonObject.getString("message");
                         JSONObject userObject = new JSONObject(message);
-
                         String id = userObject.getString("id");
                         String content = userObject.getString("content");
                         String userId = userObject.getString("userId");
                         String knId = userObject.getString("knId");
 
                         addNewPost(content, username, "0", "0", id);
-                        // finish();
-                        // startActivity(getIntent());
                     } else {
                         Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     Log.i("Error post button", e.toString());
                 }
-
                 postContent.setText("");
             }
         });
 
-        navFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setActiveTab();
-                showSection(feedSection);
-                grauButtonsContainer.setVisibility(View.VISIBLE);
-                header.setGroupName(null);
-                currentGroupId = null;
-                loadPosts(); // Refresh the post list
-            }
-        });
-
         // Default to Feed tab
-        setActiveTab();
+        setActiveTab(navFeed);
         showSection(feedSection);
 
-        // Grau Minimo and Grau Maximo Buttons
         minGrauButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -360,9 +425,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadUsers(String searchText) {
-        // Clear previous search results
         usersContainer.removeAllViews();
-
         if (searchText.isEmpty()) {
             grauButtonsContainer.setVisibility(View.VISIBLE);
             postContent.setVisibility(View.VISIBLE);
@@ -399,11 +462,11 @@ public class FeedActivity extends AppCompatActivity {
         }
     }
 
-    private void setActiveTab() {
-        navFeed.setBackgroundResource(0);
-        navGroups.setBackgroundResource(0);
-        navNotifications.setBackgroundResource(0);
-        navGraph.setBackgroundResource(0);
+    private void setActiveTab(View activeTab) {
+        navFeedIndicator.setBackgroundColor(getResources().getColor(activeTab == navFeed ? R.color.white : android.R.color.transparent));
+        navGroupsIndicator.setBackgroundColor(getResources().getColor(activeTab == navGroups ? R.color.white : android.R.color.transparent));
+        navNotificationsIndicator.setBackgroundColor(getResources().getColor(activeTab == navNotifications ? R.color.white : android.R.color.transparent));
+        navGraphIndicator.setBackgroundColor(getResources().getColor(activeTab == navGraph ? R.color.white : android.R.color.transparent));
     }
 
     private void showSection(LinearLayout section) {
@@ -414,9 +477,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadPosts() {
-        // Clear post list
         feedListContainer.removeAllViews();
-
         String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", minGrau, maxGrau, userId, currentGroupId != null ? currentGroupId : "null");
 
         String postsResponse = makeGetRequest(listPostsUrl);
@@ -486,7 +547,6 @@ public class FeedActivity extends AppCompatActivity {
         }
     }
 
-
     private void addNewPost(String content, String userNameContent, String upvotesContent, String downvotesContent, String postId) {
         LinearLayout newPost = new LinearLayout(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -495,7 +555,7 @@ public class FeedActivity extends AppCompatActivity {
         layoutParams.setMargins(16, 32, 16, 0); // Double the margin between posts
         newPost.setLayoutParams(layoutParams);
         newPost.setOrientation(LinearLayout.VERTICAL);
-        newPost.setPadding(32, 40, 32, 40);
+        newPost.setPadding(64, 48, 64, 56);
         newPost.setElevation(4);
         newPost.setBackgroundResource(R.drawable.rounded_border);
 
@@ -511,12 +571,11 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayout.LayoutParams postContentPadding = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        postContentPadding.setMargins(0, 12, 0, 4);
+        postContentPadding.setMargins(0, 32, 0, 32);
         postContent.setLayoutParams(postContentPadding);
 
         LinearLayout likeDislikeLayout = new LinearLayout(this);
         likeDislikeLayout.setOrientation(LinearLayout.HORIZONTAL);
-        likeDislikeLayout.setPadding(0, 24, 0, 0);
         likeDislikeLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
 
         ImageView likeIcon = new ImageView(this);
@@ -643,13 +702,13 @@ public class FeedActivity extends AppCompatActivity {
         layoutParams.setMargins(16, 32, 16, 0); // Double the margin between notifications
         notification.setLayoutParams(layoutParams);
         notification.setOrientation(LinearLayout.VERTICAL);
-        notification.setPadding(32, 40, 32, 40);
+        notification.setPadding(48, 52, 48, 52);
         notification.setElevation(4);
         notification.setBackgroundResource(R.drawable.rounded_border);
 
         TextView notificationName = new TextView(this);
         notificationName.setText(username);
-        notificationName.setTextSize(18);
+        notificationName.setTextSize(20);
         notificationName.setTextColor(getResources().getColor(R.color.black, null));
 
         LinearLayout buttonLayout = new LinearLayout(this);
@@ -661,6 +720,7 @@ public class FeedActivity extends AppCompatActivity {
 
         Button acceptButton = new Button(this);
         acceptButton.setText("Aceitar");
+        acceptButton.setBackground(getResources().getDrawable(R.drawable.rounded_primary_button, null));
         acceptButton.setTextColor(getResources().getColor(android.R.color.white, null));
         acceptButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
         LinearLayout.LayoutParams acceptButtonParams = new LinearLayout.LayoutParams(
@@ -691,10 +751,10 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(16, 32, 16, 0); // Double the margin between groups
+        layoutParams.setMargins(16, 32, 16, 0); // Double the margin between kns
         groupBox.setLayoutParams(layoutParams);
         groupBox.setOrientation(LinearLayout.VERTICAL);
-        groupBox.setPadding(32, 40, 32, 40);
+        groupBox.setPadding(48, 52, 48, 52);
         groupBox.setElevation(4);
         groupBox.setBackgroundResource(R.drawable.rounded_border);
 
@@ -707,7 +767,7 @@ public class FeedActivity extends AppCompatActivity {
 
         TextView groupName = new TextView(this);
         groupName.setText(name);
-        groupName.setTextSize(16);
+        groupName.setTextSize(18);
         groupName.setTextColor(getResources().getColor(R.color.black));
         groupHeader.addView(groupName);
 
@@ -757,6 +817,7 @@ public class FeedActivity extends AppCompatActivity {
         spacer.setLayoutParams(spacerParams);
 
         Button followButton = new Button(this);
+        followButton.setBackground(getResources().getDrawable(R.drawable.rounded_primary_button, null));
         if (status.equals("pending")) {
             followButton.setText("Aguardando");
             followButton.setTextColor(getResources().getColor(R.color.white, null));
@@ -804,7 +865,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void openFeedWithGroup(String groupName, String groupId) {
-        setActiveTab();
+        setActiveTab(navFeed);
         showSection(feedSection);
         grauButtonsContainer.setVisibility(View.GONE);
         header.setGroupName(groupName);
