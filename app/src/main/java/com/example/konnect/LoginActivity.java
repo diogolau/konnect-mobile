@@ -1,11 +1,11 @@
+// LoginActivity.java
 package com.example.konnect;
 
 import static com.example.konnect.NetworkUtils.makePostRequest;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.password_input);
 
         sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("userId") && sharedPreferences.contains("username")) {
+            redirectToFeedActivity();
+        }
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,30 +51,40 @@ public class LoginActivity extends AppCompatActivity {
                 String url = "http://10.0.2.2:8080/server_war_exploded/api/user/login";
                 String body = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
 
-                String response = makePostRequest(url, body);
-                Log.i("Login response", response);
+                makePostRequest(url, body, new NetworkUtils.NetworkCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        Log.i("Login response", response);
 
-                try {
-                    if (!response.contains("__error__")) {
-                        JSONObject responseObject = new JSONObject(response);
-                        String message = responseObject.getString("message");
-                        JSONObject userObject = new JSONObject(message);
+                        try {
+                            if (!response.contains("__error__")) {
+                                JSONObject responseObject = new JSONObject(response);
+                                String message = responseObject.getString("message");
+                                JSONObject userObject = new JSONObject(message);
 
-                        String userId = userObject.getString("id");
-                        String loggedUsername = userObject.getString("username");
+                                String userId = userObject.getString("id");
+                                String loggedUsername = userObject.getString("username");
 
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("userId", userId);
-                        editor.putString("username", loggedUsername);
-                        editor.apply();
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("userId", userId);
+                                editor.putString("username", loggedUsername);
+                                editor.apply();
 
-                        redirectToFeedActivity();
-                    } else {
-                        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+                                redirectToFeedActivity();
+                            } else {
+                                Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception e) {
+                            Log.i("LoginError", e.toString());
+                        }
                     }
-                } catch (Exception e) {
-                    Log.i("LoginError", e.toString());
-                }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+                        Log.e("LoginError", e.toString());
+                    }
+                });
             }
         });
 

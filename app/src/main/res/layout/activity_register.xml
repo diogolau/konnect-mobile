@@ -145,7 +145,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:padding="16dp">
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/footer_text"

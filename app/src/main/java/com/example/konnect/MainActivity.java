@@ -25,11 +25,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
-        if (!sharedPreferences.contains("userId") || !sharedPreferences.contains("username")) {
-            redirectToLoginActivity();
-            return;
-        }
+//        sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
+//        if (!sharedPreferences.contains("userId") || !sharedPreferences.contains("username")) {
+//            redirectToLoginActivity();
+//            return;
+//        }
 
         Button enterButton = findViewById(R.id.button);
         enterButton.setOnClickListener(new View.OnClickListener() {
