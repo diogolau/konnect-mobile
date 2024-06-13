@@ -5,7 +5,9 @@ import static com.example.konnect.NetworkUtils.makePostRequest;
 import static com.example.konnect.NetworkUtils.makePutRequest;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +44,7 @@ public class FeedActivity extends AppCompatActivity {
     private String userId;
     private String currentGroupId = null;
     private GraphView graphView;
+    private SharedPreferences sharedPreferences;
     int minGrau = 0;
     int maxGrau = 10;
 
@@ -67,6 +70,8 @@ public class FeedActivity extends AppCompatActivity {
         usersContainer = findViewById(R.id.users_container);
         grauButtonsContainer = findViewById(R.id.grau_buttons_container);
         header = findViewById(R.id.header);
+
+        sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
 
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
@@ -255,6 +260,10 @@ public class FeedActivity extends AppCompatActivity {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear(); // Clear all shared preferences to reset login state
+                editor.apply();
+
                 Intent intent = new Intent(FeedActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -651,7 +660,7 @@ public class FeedActivity extends AppCompatActivity {
         Button acceptButton = new Button(this);
         acceptButton.setText("Aceitar");
         acceptButton.setTextColor(getResources().getColor(android.R.color.white, null));
-        acceptButton.setBackgroundTintList(getResources().getColorStateList(R.color.green, null));
+        acceptButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
         LinearLayout.LayoutParams acceptButtonParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -667,26 +676,6 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
-        Button deleteButton = new Button(this);
-        deleteButton.setText("Excluir");
-        deleteButton.setTextColor(getResources().getColor(android.R.color.white, null));
-        deleteButton.setBackgroundTintList(getResources().getColorStateList(R.color.red, null));
-        LinearLayout.LayoutParams deleteButtonParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        deleteButtonParams.setMarginStart(8);
-        deleteButton.setLayoutParams(deleteButtonParams);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s&action=delete", id, userId);
-                String response = makePutRequest(url);
-                Log.i("DeleteResponse", response);
-                loadNotifications(); // Reload notifications
-            }
-        });
-
-        buttonLayout.addView(deleteButton);
         buttonLayout.addView(acceptButton);
 
         notification.addView(notificationName);
