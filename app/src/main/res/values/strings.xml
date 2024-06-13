@@ -29,4 +29,5 @@
     <string name="nav_groups">Groups</string>
     <string name="groups_title">Seus grupos</string>
     <string name="notifications_title">Suas notificações</string>
+    <string name="post_button">Postar</string>
 </resources>

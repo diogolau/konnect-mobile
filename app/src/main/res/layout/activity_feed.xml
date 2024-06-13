@@ -102,7 +102,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/primary"
-                        android:text="Postar" />
+                        android:textColor="@color/white"
+                        android:text="@string/post_button" />
                 </LinearLayout>
 
                 <!-- Post List -->
@@ -111,15 +112,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp">
                 </LinearLayout>
 
+                <!-- Users List -->
                 <LinearLayout
                     android:id="@+id/feed_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
 
+                <!-- Users Search Section -->
                 <LinearLayout
                     android:id="@+id/users_container"
                     android:layout_width="match_parent"
@@ -215,7 +219,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingVertical="10dp"
+        android:paddingVertical="12dp"
         android:gravity="center"
         android:layout_gravity="bottom"
         android:showDividers="middle"
@@ -223,40 +227,104 @@
         android:background="@color/primary"
         android:dividerPadding="8dp">
 
-        <ImageButton
-            android:id="@+id/nav_feed"
+        <!-- Feed Button -->
+        <LinearLayout
+            android:id="@+id/nav_feed_container"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/konnect_house_white_32"
-            android:contentDescription="@string/nav_feed" />
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <ImageButton
-            android:id="@+id/nav_groups"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/konnect_group_white_32"
-            android:contentDescription="@string/nav_groups" />
+            <ImageButton
+                android:id="@+id/nav_feed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/konnect_house_white_32"
+                android:contentDescription="@string/nav_feed" />
 
-        <ImageButton
-            android:id="@+id/nav_notifications"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/konnect_notif_white_32"
-            android:contentDescription="@string/nav_notifications" />
+            <View
+                android:id="@+id/nav_feed_indicator"
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/nav_graph"
+        <!-- Groups Button-->
+        <LinearLayout
+            android:id="@+id/nav_groups_container"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/konnect_graph_white_32"
-            android:contentDescription="@string/nav_notifications" />
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/nav_groups"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/konnect_group_white_32"
+                android:contentDescription="@string/nav_groups" />
+
+            <View
+                android:id="@+id/nav_groups_indicator"
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent" />
+        </LinearLayout>
+
+        <!-- Notifications Button -->
+        <LinearLayout
+            android:id="@+id/nav_notifications_container"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/nav_notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/konnect_notif_white_32"
+                android:contentDescription="@string/nav_notifications" />
+
+            <View
+                android:id="@+id/nav_notifications_indicator"
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent" />
+        </LinearLayout>
+
+        <!-- Graph Button -->
+        <LinearLayout
+            android:id="@+id/nav_graph_container"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/nav_graph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/konnect_graph_white_32"
+                android:contentDescription="@string/nav_notifications" />
+
+            <View
+                android:id="@+id/nav_graph_indicator"
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

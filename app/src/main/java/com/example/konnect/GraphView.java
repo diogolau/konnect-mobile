@@ -18,7 +18,6 @@ public class GraphView extends View {
     private List<Edge> edges;
     private float nodeWidth = 200;  // Default node width
     private float nodeHeight = 100;  // Default node height
-
     private float nodeCornerRadius = 20;  // Default corner radius
 
     public GraphView(Context context, AttributeSet attrs) {
