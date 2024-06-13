@@ -37,16 +37,6 @@ public class ComponentHeader extends LinearLayout {
         groupNameText = findViewById(R.id.group_name_text);
         exitButton = findViewById(R.id.header_home_button);
 
-        exitButton.setOnClickListener(v -> {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.clear(); // Clear all shared preferences to reset login state
-            editor.apply();
-
-            Intent intent = new Intent(context, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            context.startActivity(intent);
-        });
-
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ComponentHeader, 0, 0);
 
         try {
