@@ -39,7 +39,7 @@ public class ComponentHeader extends LinearLayout {
 
         exitButton.setOnClickListener(v -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.clear();
+            editor.clear(); // Clear all shared preferences to reset login state
             editor.apply();
 
             Intent intent = new Intent(context, LoginActivity.class);

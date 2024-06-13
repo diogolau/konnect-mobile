@@ -49,7 +49,6 @@
             android:layout_height="32dp"
             android:src="@drawable/konnect_exit"
             android:background="@null"
-            android:backgroundTint="@color/primary"
-            android:contentDescription="Home" />
+            android:backgroundTint="@color/primary"/>
     </LinearLayout>
 </merge>

@@ -34,11 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
 
-        // Check if user is logged in
-        if (sharedPreferences.contains("userId") && sharedPreferences.contains("username")) {
-            redirectToFeedActivity();
-        }
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                String url = "http://10.0.2.2:8080/server_war_exploded/api/user/login" ;
+                String url = "http://10.0.2.2:8080/server_war_exploded/api/user/login";
                 String body = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
 
                 String response = makePostRequest(url, body);
