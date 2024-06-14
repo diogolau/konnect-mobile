@@ -1,11 +1,9 @@
 package com.example.konnect;
 
-import static com.example.konnect.NetworkUtils.makeGetRequest;
-import static com.example.konnect.NetworkUtils.makePostRequest;
-import static com.example.konnect.NetworkUtils.makePutRequest;
-
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +30,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private ImageButton navFeed, navGroups, navNotifications, navGraph;
     private Button minGrauButton, maxGrauButton;
-    private LinearLayout feedSection, groupsSection, notificationsSection, graphSection, grauButtonsContainer, feedListContainer, usersContainer;
+    private LinearLayout feedSection, groupsSection, groupsListContainer, notificationsSection, notificationsListContainer, graphSection, grauButtonsContainer, feedListContainer, usersContainer, navFeedContainer, navGroupsContainer, navNotificationsContainer, navGraphContainer;
     private ImageButton homeButton;
     private Button postButton;
     private EditText postContent;
@@ -42,8 +40,10 @@ public class FeedActivity extends AppCompatActivity {
     private String userId;
     private String currentGroupId = null;
     private GraphView graphView;
+    private SharedPreferences sharedPreferences;
     int minGrau = 0;
     int maxGrau = 10;
+    private View navFeedIndicator, navGroupsIndicator, navNotificationsIndicator, navGraphIndicator;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -57,21 +57,34 @@ public class FeedActivity extends AppCompatActivity {
         navGroups = findViewById(R.id.nav_groups);
         navNotifications = findViewById(R.id.nav_notifications);
         navGraph = findViewById(R.id.nav_graph);
+        navFeedContainer = findViewById(R.id.nav_feed_container);
+        navGroupsContainer = findViewById(R.id.nav_groups_container);
+        navNotificationsContainer = findViewById(R.id.nav_notifications_container);
+        navGraphContainer = findViewById(R.id.nav_graph_container);
         homeButton = findViewById(R.id.header_home_button);
         postButton = findViewById(R.id.post_button);
         minGrauButton = findViewById(R.id.grau_min_button);
         maxGrauButton = findViewById(R.id.grau_max_button);
         postContent = findViewById(R.id.content_input);
-        searchBar = (EditText) findViewById(R.id.search_bar);
+        searchBar = findViewById(R.id.search_bar);
         feedListContainer = findViewById(R.id.feed_list_container);
         usersContainer = findViewById(R.id.users_container);
         grauButtonsContainer = findViewById(R.id.grau_buttons_container);
         header = findViewById(R.id.header);
 
+        sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
+
         feedSection = findViewById(R.id.feed_section);
         groupsSection = findViewById(R.id.groups_section);
+        groupsListContainer = findViewById(R.id.groups_list_container);
         notificationsSection = findViewById(R.id.notifications_section);
+        notificationsListContainer = findViewById(R.id.notifications_list_container);
         graphSection = findViewById(R.id.graph_section);
+
+        navFeedIndicator = findViewById(R.id.nav_feed_indicator);
+        navGroupsIndicator = findViewById(R.id.nav_groups_indicator);
+        navNotificationsIndicator = findViewById(R.id.nav_notifications_indicator);
+        navGraphIndicator = findViewById(R.id.nav_graph_indicator);
 
         header.setHeaderText(username);
 
@@ -87,14 +100,20 @@ public class FeedActivity extends AppCompatActivity {
         graphView = findViewById(R.id.graphView);
 
         String listConnectionsUrl = "http://10.0.2.2:8080/server_war_exploded/api/graph";
-        String connectionsResponse = makeGetRequest(listConnectionsUrl);
-        Log.i("connectionsResponse", connectionsResponse);
-
-        String listUsersUrl = "http://10.0.2.2:8080/server_war_exploded/api/users";
-        String allUsersResponse = makeGetRequest(listUsersUrl);
-        Log.i("allUsersResponse", allUsersResponse);
-
-        ArrayList<String> distinctUsernames = new ArrayList<>();
+        NetworkUtils.makeGetRequest(listConnectionsUrl, new NetworkUtils.NetworkCallback()) {
+            @Override
+            public void onSuccess(String connectionsResponse) {
+                Log.i("connectionsResponse", connectionsResponse);
+                String listUsersUrl = "http://10.0.2.2:8080/server_war_exploded/api/users";
+                NetworkUtils.makeGetRequest(listUsersUrl, new NetworkUtils.NetworkCallback()) {
+                    @Override
+                    public void onSuccess(String allUsersResponse) {
+                        Log.i("allUsersResponse", allUsersResponse);
+                        ArrayList<String> distinctUsernames = new ArrayList<>();
+                    }
+                }
+            }
+        }
 
         try {
             JSONObject jsonObject = new JSONObject(connectionsResponse);
@@ -146,7 +165,31 @@ public class FeedActivity extends AppCompatActivity {
         navFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navFeed);
+                showSection(feedSection);
+                grauButtonsContainer.setVisibility(View.VISIBLE);
+                header.setGroupName(null);
+                currentGroupId = null;
+                loadPosts(); // Refresh the post list
+            }
+        });
+
+        navFeedIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navFeed);
+                showSection(feedSection);
+                grauButtonsContainer.setVisibility(View.VISIBLE);
+                header.setGroupName(null);
+                currentGroupId = null;
+                loadPosts(); // Refresh the post list
+            }
+        });
+
+        navFeedContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navFeed);
                 showSection(feedSection);
                 grauButtonsContainer.setVisibility(View.VISIBLE);
                 header.setGroupName(null);
@@ -158,7 +201,25 @@ public class FeedActivity extends AppCompatActivity {
         navGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navGroups);
+                showSection(groupsSection);
+                loadGroups();
+            }
+        });
+
+        navGroupsIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGroups);
+                showSection(groupsSection);
+                loadGroups();
+            }
+        });
+
+        navGroupsContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGroups);
                 showSection(groupsSection);
                 loadGroups();
             }
@@ -167,7 +228,25 @@ public class FeedActivity extends AppCompatActivity {
         navNotifications.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navNotifications);
+                showSection(notificationsSection);
+                loadNotifications();
+            }
+        });
+
+        navNotificationsIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navNotifications);
+                showSection(notificationsSection);
+                loadNotifications();
+            }
+        });
+
+        navNotificationsContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navNotifications);
                 showSection(notificationsSection);
                 loadNotifications();
             }
@@ -176,7 +255,23 @@ public class FeedActivity extends AppCompatActivity {
         navGraph.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setActiveTab();
+                setActiveTab(navGraph);
+                showSection(graphSection);
+            }
+        });
+
+        navGraphIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGraph);
+                showSection(graphSection);
+            }
+        });
+
+        navGraphContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setActiveTab(navGraph);
                 showSection(graphSection);
             }
         });
@@ -184,6 +279,10 @@ public class FeedActivity extends AppCompatActivity {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear(); // Clear all shared preferences to reset login state
+                editor.apply();
+
                 Intent intent = new Intent(FeedActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -194,12 +293,10 @@ public class FeedActivity extends AppCompatActivity {
         searchBar.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 String searchText = s.toString();
-
                 loadUsers(searchText);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
@@ -208,7 +305,6 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String postMessage = postContent.getText().toString();
-
                 if (postMessage.isEmpty()) {
                     Toast.makeText(getBaseContext(), "Escreva a sua mensagem", Toast.LENGTH_LONG).show();
                     return;
@@ -216,52 +312,44 @@ public class FeedActivity extends AppCompatActivity {
 
                 String url = "http://10.0.2.2:8080/server_war_exploded/api/post";
                 String body = String.format("{\"content\":\"%s\", \"userId\":\"%s\", \"groupId\":\"%s\"}", postMessage, userId, currentGroupId != null ? currentGroupId : "null");
+                NetworkUtils.makePostRequest(url, body, new NetworkUtils.NetworkCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        Log.i("response", response);
 
-                String response = makePostRequest(url, body);
-                Log.i("response", response);
+                        try {
+                            if (!response.contains("__error__")) {
+                                JSONObject jsonObject = new JSONObject(response);
+                                String message = jsonObject.getString("message");
+                                JSONObject userObject = new JSONObject(message);
+                                String id = userObject.getString("id");
+                                String content = userObject.getString("content");
+                                String userId = userObject.getString("userId");
+                                String knId = userObject.getString("knId");
 
-                try {
-                    if (!response.contains("__error__")) {
-                        JSONObject jsonObject = new JSONObject(response);
-                        String message = jsonObject.getString("message");
-                        JSONObject userObject = new JSONObject(message);
-
-                        String id = userObject.getString("id");
-                        String content = userObject.getString("content");
-                        String userId = userObject.getString("userId");
-                        String knId = userObject.getString("knId");
-
-                        addNewPost(content, username, "0", "0", id);
-                        // finish();
-                        // startActivity(getIntent());
-                    } else {
-                        Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
+                                addNewPost(content, username, "0", "0", id);
+                            } else {
+                                Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception e) {
+                            Log.i("Error post button", e.toString());
+                        }
+                        postContent.setText("");
                     }
-                } catch (Exception e) {
-                    Log.i("Error post button", e.toString());
-                }
 
-                postContent.setText("");
-            }
-        });
-
-        navFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setActiveTab();
-                showSection(feedSection);
-                grauButtonsContainer.setVisibility(View.VISIBLE);
-                header.setGroupName(null);
-                currentGroupId = null;
-                loadPosts(); // Refresh the post list
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(getBaseContext(), "Erro no post", Toast.LENGTH_LONG).show();
+                        Log.e("Network Error", "Error making post request", e);
+                    }
+                });
             }
         });
 
         // Default to Feed tab
-        setActiveTab();
+        setActiveTab(navFeed);
         showSection(feedSection);
 
-        // Grau Minimo and Grau Maximo Buttons
         minGrauButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -278,9 +366,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadUsers(String searchText) {
-        // Clear previous search results
         usersContainer.removeAllViews();
-
         if (searchText.isEmpty()) {
             grauButtonsContainer.setVisibility(View.VISIBLE);
             postContent.setVisibility(View.VISIBLE);
@@ -295,33 +381,42 @@ public class FeedActivity extends AppCompatActivity {
             usersContainer.setVisibility(View.VISIBLE);
 
             String listUsersUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/connection?userId=%s&searchFilter=%s", userId, searchText);
-            String usersResponse = makeGetRequest(listUsersUrl);
-            Log.i("usersResponse", usersResponse);
+            NetworkUtils.makeGetRequest(listUsersUrl, new NetworkUtils.NetworkCallback() {
+                @Override
+                public void onSuccess(String usersResponse) {
+                    Log.i("usersResponse", usersResponse);
 
-            try {
-                JSONObject jsonObject = new JSONObject(usersResponse);
-                String message = jsonObject.getString("message");
-                JSONArray jsonArray = new JSONArray(message);
+                    try {
+                        JSONObject jsonObject = new JSONObject(usersResponse);
+                        String message = jsonObject.getString("message");
+                        JSONArray jsonArray = new JSONArray(message);
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject knObject = jsonArray.getJSONObject(i);
-                    String id = knObject.getString("id");
-                    String username = knObject.getString("username");
-                    String status = knObject.getString("status");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject knObject = jsonArray.getJSONObject(i);
+                            String id = knObject.getString("id");
+                            String username = knObject.getString("username");
+                            String status = knObject.getString("status");
 
-                    addNewConnection(id, username, status);
+                            addNewConnection(id, username, status);
+                        }
+                    } catch (Exception e) {
+                        Log.i("Erro listando conexões", e.toString());
+                    }
                 }
-            } catch (Exception e) {
-                Log.i("Erro listando conexões", e.toString());
-            }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.e("Network Error", "Error fetching users", e);
+                }
+            });
         }
     }
 
-    private void setActiveTab() {
-        navFeed.setBackgroundResource(0);
-        navGroups.setBackgroundResource(0);
-        navNotifications.setBackgroundResource(0);
-        navGraph.setBackgroundResource(0);
+    private void setActiveTab(View activeTab) {
+        navFeedIndicator.setBackgroundColor(getResources().getColor(activeTab == navFeed ? R.color.white : android.R.color.transparent));
+        navGroupsIndicator.setBackgroundColor(getResources().getColor(activeTab == navGroups ? R.color.white : android.R.color.transparent));
+        navNotificationsIndicator.setBackgroundColor(getResources().getColor(activeTab == navNotifications ? R.color.white : android.R.color.transparent));
+        navGraphIndicator.setBackgroundColor(getResources().getColor(activeTab == navGraph ? R.color.white : android.R.color.transparent));
     }
 
     private void showSection(LinearLayout section) {
@@ -332,78 +427,92 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadPosts() {
-        // Clear post list
         feedListContainer.removeAllViews();
-
         String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", minGrau, maxGrau, userId, currentGroupId != null ? currentGroupId : "null");
 
-        String postsResponse = makeGetRequest(listPostsUrl);
-        Log.i("abloble", postsResponse);
+        NetworkUtils.makeGetRequest(listPostsUrl, new NetworkUtils.NetworkCallback() {
+            @Override
+            public void onSuccess(String postsResponse) {
+                Log.i("abloble", postsResponse);
 
-        try {
-            JSONObject jsonObject = new JSONObject(postsResponse);
-            String message = jsonObject.getString("message");
-            JSONArray jsonArray = new JSONArray(message);
+                try {
+                    JSONObject jsonObject = new JSONObject(postsResponse);
+                    String message = jsonObject.getString("message");
+                    JSONArray jsonArray = new JSONArray(message);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject postObject = jsonArray.getJSONObject(i);
-                String id = postObject.getString("id");
-                String username = postObject.getString("username");
-                String content = postObject.getString("content");
-                String userId = postObject.getString("userId");
-                String upvotes = postObject.getString("upvotes");
-                String downvotes = postObject.getString("downvotes");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject postObject = jsonArray.getJSONObject(i);
+                        String id = postObject.getString("id");
+                        String username = postObject.getString("username");
+                        String content = postObject.getString("content");
+                        String userId = postObject.getString("userId");
+                        String upvotes = postObject.getString("upvotes");
+                        String downvotes = postObject.getString("downvotes");
 
-                addNewPost(content, username, upvotes, downvotes, id);
+                        addNewPost(content, username, upvotes, downvotes, id);
+                    }
+                } catch (Exception e) {
+                    Log.i("Erro listando posts", e.toString());
+                }
             }
-        } catch (Exception e) {
-            Log.i("Erro listando posts", e.toString());
-        }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Network Error", "Error fetching posts", e);
+            }
+        });
     }
 
     private void loadGroups() {
-        groupsSection.removeAllViews();
+        groupsListContainer.removeAllViews();
         String listKnsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/kn?userId=%s", userId);
-        String knsResponse = makeGetRequest(listKnsUrl);
+        NetworkUtils.makeGetRequest(listKnsUrl, new NetworkUtils.NetworkCallback() {
+            @Override
+            public void onSuccess(String knsResponse) {
+                try {
+                    JSONObject jsonObject = new JSONObject(knsResponse);
+                    String message = jsonObject.getString("message");
+                    JSONArray jsonArray = new JSONArray(message);
 
-        try {
-            JSONObject jsonObject = new JSONObject(knsResponse);
-            String message = jsonObject.getString("message");
-            JSONArray jsonArray = new JSONArray(message);
+                    if (jsonArray.length() == 0) {
+                        LinearLayout noGroupsLayout = new LinearLayout(FeedActivity.this);
+                        noGroupsLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT));
+                        noGroupsLayout.setGravity(Gravity.CENTER);
+                        noGroupsLayout.setOrientation(LinearLayout.VERTICAL);
 
-            if (jsonArray.length() == 0) {
-                LinearLayout noGroupsLayout = new LinearLayout(this);
-                noGroupsLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
-                noGroupsLayout.setGravity(Gravity.CENTER);
-                noGroupsLayout.setOrientation(LinearLayout.VERTICAL);
+                        TextView noGroupsView = new TextView(FeedActivity.this);
+                        noGroupsView.setText("Nenhum grupo encontrado");
+                        noGroupsView.setTextSize(18);
+                        noGroupsView.setTextColor(getResources().getColor(R.color.gray));
+                        noGroupsView.setGravity(Gravity.CENTER);
 
-                TextView noGroupsView = new TextView(this);
-                noGroupsView.setText("Nenhum grupo encontrado");
-                noGroupsView.setTextSize(18);
-                noGroupsView.setTextColor(getResources().getColor(R.color.gray));
-                noGroupsView.setGravity(Gravity.CENTER);
+                        int paddingInDp = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
+                        noGroupsView.setPadding(paddingInDp, 0, paddingInDp, 0);
 
-                int paddingInDp = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
-                noGroupsView.setPadding(paddingInDp, 0, paddingInDp, 0);
+                        noGroupsLayout.addView(noGroupsView);
+                        groupsListContainer.addView(noGroupsLayout);
+                    } else {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject knObject = jsonArray.getJSONObject(i);
+                            String id = knObject.getString("id");
+                            String name = knObject.getString("name");
 
-                noGroupsLayout.addView(noGroupsView);
-                groupsSection.addView(noGroupsLayout);
-            } else {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject knObject = jsonArray.getJSONObject(i);
-                    String id = knObject.getString("id");
-                    String name = knObject.getString("name");
-
-                    addNewKn(id, name);
+                            addNewKn(id, name);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.i("Erro listando grupos", e.toString());
                 }
             }
-        } catch (Exception e) {
-            Log.i("Erro listando grupos", e.toString());
-        }
-    }
 
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Network Error", "Error fetching groups", e);
+            }
+        });
+    }
 
     private void addNewPost(String content, String userNameContent, String upvotesContent, String downvotesContent, String postId) {
         LinearLayout newPost = new LinearLayout(this);
@@ -413,7 +522,7 @@ public class FeedActivity extends AppCompatActivity {
         layoutParams.setMargins(16, 32, 16, 0); // Double the margin between posts
         newPost.setLayoutParams(layoutParams);
         newPost.setOrientation(LinearLayout.VERTICAL);
-        newPost.setPadding(32, 40, 32, 40);
+        newPost.setPadding(64, 48, 64, 56);
         newPost.setElevation(4);
         newPost.setBackgroundResource(R.drawable.rounded_border);
 
@@ -429,12 +538,11 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayout.LayoutParams postContentPadding = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        postContentPadding.setMargins(0, 12, 0, 4);
+        postContentPadding.setMargins(0, 32, 0, 32);
         postContent.setLayoutParams(postContentPadding);
 
         LinearLayout likeDislikeLayout = new LinearLayout(this);
         likeDislikeLayout.setOrientation(LinearLayout.HORIZONTAL);
-        likeDislikeLayout.setPadding(0, 24, 0, 0);
         likeDislikeLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
 
         ImageView likeIcon = new ImageView(this);
@@ -461,7 +569,17 @@ public class FeedActivity extends AppCompatActivity {
 
                 String postId = (String) v.getTag();
                 String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?postId=%s&vote=upvote", postId);
-                new Thread(() -> makePutRequest(url)).start(); // Send the request in a separate thread
+                NetworkUtils.makePutRequest(url, new NetworkUtils.NetworkCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        // Handle success if needed
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("Network Error", "Error making put request", e);
+                    }
+                });
             }
         });
 
@@ -485,7 +603,17 @@ public class FeedActivity extends AppCompatActivity {
 
                 String postId = (String) v.getTag();
                 String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?postId=%s&vote=downvote", postId);
-                new Thread(() -> makePutRequest(url)).start(); // Send the request in a separate thread
+                NetworkUtils.makePutRequest(url, new NetworkUtils.NetworkCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        // Handle success if needed
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("Network Error", "Error making put request", e);
+                    }
+                });
             }
         });
 
@@ -501,57 +629,64 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadNotifications() {
-        notificationsSection.removeAllViews();
+        notificationsListContainer.removeAllViews();
         String listNotificationsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userId=%s", userId);
-        String notificationsResponse = makeGetRequest(listNotificationsUrl);
+        NetworkUtils.makeGetRequest(listNotificationsUrl, new NetworkUtils.NetworkCallback() {
+            @Override
+            public void onSuccess(String notificationsResponse) {
+                try {
+                    JSONObject jsonObject = new JSONObject(notificationsResponse);
+                    String message = jsonObject.getString("message");
+                    JSONArray jsonArray = new JSONArray(message);
 
-        try {
-            JSONObject jsonObject = new JSONObject(notificationsResponse);
-            String message = jsonObject.getString("message");
-            JSONArray jsonArray = new JSONArray(message);
+                    if (jsonArray.length() == 0) {
+                        LinearLayout noNotificationsLayout = new LinearLayout(FeedActivity.this);
+                        noNotificationsLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT));
+                        noNotificationsLayout.setGravity(Gravity.CENTER);
+                        noNotificationsLayout.setOrientation(LinearLayout.VERTICAL);
 
-            if (jsonArray.length() == 0) {
-                LinearLayout noNotificationsLayout = new LinearLayout(this);
-                noNotificationsLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
-                noNotificationsLayout.setGravity(Gravity.CENTER);
-                noNotificationsLayout.setOrientation(LinearLayout.VERTICAL);
+                        TextView noNotificationsView = new TextView(FeedActivity.this);
+                        noNotificationsView.setText("Nenhuma notificação por enquanto");
+                        noNotificationsView.setTextSize(18);
+                        noNotificationsView.setTextColor(getResources().getColor(R.color.gray));
+                        noNotificationsView.setGravity(Gravity.CENTER);
 
-                TextView noNotificationsView = new TextView(this);
-                noNotificationsView.setText("Nenhuma notificação por enquanto");
-                noNotificationsView.setTextSize(18);
-                noNotificationsView.setTextColor(getResources().getColor(R.color.gray));
-                noNotificationsView.setGravity(Gravity.CENTER);
+                        int paddingInDp = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
+                        noNotificationsView.setPadding(paddingInDp, 0, paddingInDp, 0);
 
-                int paddingInDp = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
-                noNotificationsView.setPadding(paddingInDp, 0, paddingInDp, 0);
-
-                noNotificationsLayout.addView(noNotificationsView);
-                notificationsSection.addView(noNotificationsLayout);
-            } else {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject notificationObject = jsonArray.getJSONObject(i);
-                    String id = notificationObject.getString("id");
-                    String username = notificationObject.getString("username");
-
-                    // Check if status exists before accessing it
-                    if (notificationObject.has("status")) {
-                        String status = notificationObject.getString("status");
-                        if (status.equals("pending")) {
-                            addNewNotification(id, username);
-                        }
+                        noNotificationsLayout.addView(noNotificationsView);
+                        notificationsListContainer.addView(noNotificationsLayout);
                     } else {
-                        // If no status is present, handle it as pending by default
-                        addNewNotification(id, username);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject notificationObject = jsonArray.getJSONObject(i);
+                            String id = notificationObject.getString("id");
+                            String username = notificationObject.getString("username");
+
+                            // Check if status exists before accessing it
+                            if (notificationObject.has("status")) {
+                                String status = notificationObject.getString("status");
+                                if (status.equals("pending")) {
+                                    addNewNotification(id, username);
+                                }
+                            } else {
+                                // If no status is present, handle it as pending by default
+                                addNewNotification(id, username);
+                            }
+                        }
                     }
+                } catch (Exception e) {
+                    Log.i("Erro listando notificações", e.toString());
                 }
             }
-        } catch (Exception e) {
-            Log.i("Erro listando notificações", e.toString());
-        }
-    }
 
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Network Error", "Error fetching notifications", e);
+            }
+        });
+    }
 
     private void addNewNotification(String id, String username) {
         LinearLayout notification = new LinearLayout(this);
@@ -561,13 +696,13 @@ public class FeedActivity extends AppCompatActivity {
         layoutParams.setMargins(16, 32, 16, 0); // Double the margin between notifications
         notification.setLayoutParams(layoutParams);
         notification.setOrientation(LinearLayout.VERTICAL);
-        notification.setPadding(32, 40, 32, 40);
+        notification.setPadding(48, 52, 48, 52);
         notification.setElevation(4);
         notification.setBackgroundResource(R.drawable.rounded_border);
 
         TextView notificationName = new TextView(this);
         notificationName.setText(username);
-        notificationName.setTextSize(18);
+        notificationName.setTextSize(20);
         notificationName.setTextColor(getResources().getColor(R.color.black, null));
 
         LinearLayout buttonLayout = new LinearLayout(this);
@@ -579,8 +714,9 @@ public class FeedActivity extends AppCompatActivity {
 
         Button acceptButton = new Button(this);
         acceptButton.setText("Aceitar");
+        acceptButton.setBackground(getResources().getDrawable(R.drawable.rounded_primary_button, null));
         acceptButton.setTextColor(getResources().getColor(android.R.color.white, null));
-        acceptButton.setBackgroundTintList(getResources().getColorStateList(R.color.green, null));
+        acceptButton.setBackgroundTintList(getResources().getColorStateList(R.color.primary, null));
         LinearLayout.LayoutParams acceptButtonParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -590,49 +726,37 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s&action=accept", id, userId);
-                String response = makePutRequest(url);
-                Log.i("AcceptResponse", response);
-                loadNotifications(); // Reload notifications
+                NetworkUtils.makePutRequest(url, new NetworkUtils.NetworkCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        Log.i("AcceptResponse", response);
+                        loadNotifications(); // Reload notifications
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("Network Error", "Error making put request", e);
+                    }
+                });
             }
         });
 
-        Button deleteButton = new Button(this);
-        deleteButton.setText("Excluir");
-        deleteButton.setTextColor(getResources().getColor(android.R.color.white, null));
-        deleteButton.setBackgroundTintList(getResources().getColorStateList(R.color.red, null));
-        LinearLayout.LayoutParams deleteButtonParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        deleteButtonParams.setMarginStart(8);
-        deleteButton.setLayoutParams(deleteButtonParams);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = String.format("http://10.0.2.2:8080/server_war_exploded/api/notification?userFromId=%s&userToId=%s&action=delete", id, userId);
-                String response = makePutRequest(url);
-                Log.i("DeleteResponse", response);
-                loadNotifications(); // Reload notifications
-            }
-        });
-
-        buttonLayout.addView(deleteButton);
         buttonLayout.addView(acceptButton);
 
         notification.addView(notificationName);
         notification.addView(buttonLayout);
-        notificationsSection.addView(notification, 0); // Add the new notification at the top of the list
+        notificationsListContainer.addView(notification, 0); // Add the new notification at the top of the list
     }
-
 
     private void addNewKn(String id, String name) {
         LinearLayout groupBox = new LinearLayout(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(16, 32, 16, 0); // Double the margin between groups
+        layoutParams.setMargins(16, 32, 16, 0); // Double the margin between kns
         groupBox.setLayoutParams(layoutParams);
         groupBox.setOrientation(LinearLayout.VERTICAL);
-        groupBox.setPadding(32, 40, 32, 40);
+        groupBox.setPadding(48, 52, 48, 52);
         groupBox.setElevation(4);
         groupBox.setBackgroundResource(R.drawable.rounded_border);
 
@@ -645,7 +769,7 @@ public class FeedActivity extends AppCompatActivity {
 
         TextView groupName = new TextView(this);
         groupName.setText(name);
-        groupName.setTextSize(16);
+        groupName.setTextSize(18);
         groupName.setTextColor(getResources().getColor(R.color.black));
         groupHeader.addView(groupName);
 
@@ -663,7 +787,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
-        groupsSection.addView(groupBox);
+        groupsListContainer.addView(groupBox);
     }
 
     private void addNewConnection(String id, String name, String status) {
@@ -695,6 +819,8 @@ public class FeedActivity extends AppCompatActivity {
         spacer.setLayoutParams(spacerParams);
 
         Button followButton = new Button(this);
+        followButton.setBackground(getResources().getDrawable(R.drawable.rounded_primary_button, null));
+        followButton.setPadding(16, 8, 16, 8);
         if (status.equals("pending")) {
             followButton.setText("Aguardando");
             followButton.setTextColor(getResources().getColor(R.color.white, null));
@@ -718,18 +844,28 @@ public class FeedActivity extends AppCompatActivity {
         followButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String inviteUrl = "http://10.0.2.2:8080/server_war_exploded/api/connection" ;
+                String inviteUrl = "http://10.0.2.2:8080/server_war_exploded/api/connection";
                 String body = String.format("{\"userFromId\":\"%s\", \"userToId\":\"%s\"}", userId, id);
 
-                String response = makePostRequest(inviteUrl, body);
-                if (response.contains("__error__")) {
-                    Toast.makeText(getBaseContext(), "Erro ao seguir usuário", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getBaseContext(), "Seguindo usuário", Toast.LENGTH_LONG).show();
+                NetworkUtils.makePostRequest(inviteUrl, body, new NetworkUtils.NetworkCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        if (response.contains("__error__")) {
+                            Toast.makeText(getBaseContext(), "Erro ao seguir usuário", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getBaseContext(), "Seguindo usuário", Toast.LENGTH_LONG).show();
 
-                    String searchText = searchBar.getText().toString();
-                    loadUsers(searchText); // Reload users
-                }
+                            String searchText = searchBar.getText().toString();
+                            loadUsers(searchText); // Reload users
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(getBaseContext(), "Erro ao seguir usuário", Toast.LENGTH_LONG).show();
+                        Log.e("Network Error", "Error making post request", e);
+                    }
+                });
             }
         });
 
@@ -742,7 +878,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void openFeedWithGroup(String groupName, String groupId) {
-        setActiveTab();
+        setActiveTab(navFeed);
         showSection(feedSection);
         grauButtonsContainer.setVisibility(View.GONE);
         header.setGroupName(groupName);
@@ -754,28 +890,37 @@ public class FeedActivity extends AppCompatActivity {
         feedListContainer.removeAllViews();
         String listPostsUrl = String.format("http://10.0.2.2:8080/server_war_exploded/api/post?minDepth=%s&maxDepth=%s&userId=%s&groupId=%s", "0", "10", userId, groupId);
 
-        String postsResponse = makeGetRequest(listPostsUrl);
-        Log.i("abloble", postsResponse);
+        NetworkUtils.makeGetRequest(listPostsUrl, new NetworkUtils.NetworkCallback() {
+            @Override
+            public void onSuccess(String postsResponse) {
+                Log.i("abloble", postsResponse);
 
-        try {
-            JSONObject jsonObject = new JSONObject(postsResponse);
-            String message = jsonObject.getString("message");
-            JSONArray jsonArray = new JSONArray(message);
+                try {
+                    JSONObject jsonObject = new JSONObject(postsResponse);
+                    String message = jsonObject.getString("message");
+                    JSONArray jsonArray = new JSONArray(message);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject postObject = jsonArray.getJSONObject(i);
-                String id = postObject.getString("id");
-                String username = postObject.getString("username");
-                String content = postObject.getString("content");
-                String userId = postObject.getString("userId");
-                String upvotes = postObject.getString("upvotes");
-                String downvotes = postObject.getString("downvotes");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject postObject = jsonArray.getJSONObject(i);
+                        String id = postObject.getString("id");
+                        String username = postObject.getString("username");
+                        String content = postObject.getString("content");
+                        String userId = postObject.getString("userId");
+                        String upvotes = postObject.getString("upvotes");
+                        String downvotes = postObject.getString("downvotes");
 
-                addNewPost(content, username, upvotes, downvotes, id);
+                        addNewPost(content, username, upvotes, downvotes, id);
+                    }
+                } catch (Exception e) {
+                    Log.i("Erro listando posts", e.toString());
+                }
             }
-        } catch (Exception e) {
-            Log.i("Erro listando posts", e.toString());
-        }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Network Error", "Error fetching posts", e);
+            }
+        });
     }
 
     private void showNumberPickerDialog(final Button button, final String title) {

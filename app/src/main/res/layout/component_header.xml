@@ -5,14 +5,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingVertical="8dp"
+        android:paddingVertical="18dp"
         android:paddingHorizontal="16dp"
         android:gravity="center_vertical">
 
         <ImageView
             android:id="@+id/header_logo"
             android:layout_width="32dp"
-            android:layout_height="60dp"
+            android:layout_height="38dp"
             android:src="@drawable/konnect_logo" />
 
         <View
@@ -49,7 +49,6 @@
             android:layout_height="32dp"
             android:src="@drawable/konnect_exit"
             android:background="@null"
-            android:backgroundTint="@color/primary"
-            android:contentDescription="Home" />
+            android:backgroundTint="@color/primary"/>
     </LinearLayout>
 </merge>
