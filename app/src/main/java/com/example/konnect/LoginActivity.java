@@ -1,8 +1,11 @@
+// LoginActivity.java
 package com.example.konnect;
 
 import static com.example.konnect.NetworkUtils.makePostRequest;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private EditText usernameInput;
     private EditText passwordInput;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,11 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.button_login);
         usernameInput = findViewById(R.id.username_input);
         passwordInput = findViewById(R.id.password_input);
+
+        sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("userId") && sharedPreferences.contains("username")) {
+            redirectToFeedActivity();
+        }
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,32 +48,43 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                String url = "http://10.0.2.2:8080/server_war_exploded/api/user/login" ;
+                String url = "http://10.0.2.2:8080/server_war_exploded/api/user/login";
                 String body = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
 
-                String response = makePostRequest( url, body);
-                Log.i("Login response", response);
+                makePostRequest(url, body, new NetworkUtils.NetworkCallback() {
+                    @Override
+                    public void onSuccess(String response) {
+                        Log.i("Login response", response);
 
-                try {
-                    if (!response.contains("__error__")) {
-                        JSONObject responseObject = new JSONObject(response);
-                        String message = responseObject.getString("message");
-                        JSONObject userObject = new JSONObject(message);
+                        try {
+                            if (!response.contains("__error__")) {
+                                JSONObject responseObject = new JSONObject(response);
+                                String message = responseObject.getString("message");
+                                JSONObject userObject = new JSONObject(message);
 
-                        String userId = userObject.getString("id");
-                        String loggedUsername = userObject.getString("username");
+                                String userId = userObject.getString("id");
+                                String loggedUsername = userObject.getString("username");
 
-                        Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
-                        intent.putExtra("username", loggedUsername);
-                        intent.putExtra("userId", userId);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("userId", userId);
+                                editor.putString("username", loggedUsername);
+                                editor.apply();
+
+                                redirectToFeedActivity();
+                            } else {
+                                Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception e) {
+                            Log.i("LoginError", e.toString());
+                        }
                     }
-                } catch (Exception e) {
-                    Log.i("LoginError", e.toString());
-                }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+                        Log.e("LoginError", e.toString());
+                    }
+                });
             }
         });
 
@@ -76,5 +96,16 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void redirectToFeedActivity() {
+        String userId = sharedPreferences.getString("userId", "");
+        String loggedUsername = sharedPreferences.getString("username", "");
+
+        Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
+        intent.putExtra("username", loggedUsername);
+        intent.putExtra("userId", userId);
+        startActivity(intent);
+        finish();
     }
 }

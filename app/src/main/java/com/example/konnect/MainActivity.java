@@ -1,30 +1,35 @@
 package com.example.konnect;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
 
     private OkHttpClient client;
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
+//        if (!sharedPreferences.contains("userId") || !sharedPreferences.contains("username")) {
+//            redirectToLoginActivity();
+//            return;
+//        }
 
         Button enterButton = findViewById(R.id.button);
         enterButton.setOnClickListener(new View.OnClickListener() {
@@ -44,14 +49,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (android.os.Build .VERSION.SDK_INT > 9) {
+        if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new
-                    StrictMode.ThreadPolicy .Builder().permitAll().build();
+                    StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
     }
 
-    private String makeGetRequest (String url) {
+    private void redirectToLoginActivity() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private String makeGetRequest(String url) {
         client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)

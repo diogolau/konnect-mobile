@@ -1,6 +1,8 @@
 package com.example.konnect;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ public class ComponentHeader extends LinearLayout {
     private TextView headerText;
     private TextView groupNameText;
     private ImageButton exitButton;
+    private SharedPreferences sharedPreferences;
 
     public ComponentHeader(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -26,6 +29,8 @@ public class ComponentHeader extends LinearLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        sharedPreferences = context.getSharedPreferences("user_pref", Context.MODE_PRIVATE);
+
         LayoutInflater.from(context).inflate(R.layout.component_header, this, true);
 
         headerText = findViewById(R.id.header_text);
