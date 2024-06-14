@@ -100,115 +100,44 @@ public class FeedActivity extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject(connectionsResponse);
             String message = jsonObject.getString("message");
             JSONArray jsonArray = new JSONArray(message);
-
+        
             JSONObject allUsersObject = new JSONObject(allUsersResponse);
             String allUsersMessage = allUsersObject.getString("message");
             JSONArray allUsersArray = new JSONArray(allUsersMessage);
-
-            for (int i = 0; i < allUsersArray.length(); i++) {
-                JSONObject connectionObject = allUsersArray.getJSONObject(i);
-                String username = connectionObject.getString("username");
-
-                if (!distinctUsernames.contains(username)) {
-                    distinctUsernames.add(username);
-                }
+        
+            // Dynamically position nodes based on the number of distinct usernames
+            int numUsers = distinctUsernames.size();
+            double centerX = 500;
+            double centerY = 850;
+            double radius = 300;
+            double angleIncrement = 2 * Math.PI / numUsers;
+        
+            for (int i = 0; i < numUsers; i++) {
+                double angle = i * angleIncrement;
+                double x = centerX + radius * Math.cos(angle);
+                double y = centerY + radius * Math.sin(angle);
+                graphView.addNode(distinctUsernames.get(i), x, y);
             }
-            int len = distinctUsernames.size();
-            if (len == 1) {
-                graphView.addNode(distinctUsernames.get(0), 500, 850);
-            }
-            if (len == 2) {
-                graphView.addNode(distinctUsernames.get(0), 266, 850);
-                graphView.addNode(distinctUsernames.get(1), 732, 850);
-                graphView.addEdge(0, 1);
-            }
-            if (len == 3) {
-                graphView.addNode(distinctUsernames.get(0), 500, 633);
-                graphView.addNode(distinctUsernames.get(1), 266, 866);
-                graphView.addNode(distinctUsernames.get(2), 732, 866);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject connectionObject = jsonArray.getJSONObject(i);
-                    String usernameTo = connectionObject.getString("usernameTo");
-                    String usernameFrom = connectionObject.getString("usernameFrom");
-
-                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(1))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(1)))) {
-                        graphView.addEdge(0, 1);
-                    }
-                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(2))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(2)))) {
-                        graphView.addEdge(0, 2);
-                    }
-                    if ((usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(2))) ||
-                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(2)))) {
-                        graphView.addEdge(1, 2);
+        
+            // Create edges between distinct usernames
+            for (int i = 0; i < numUsers; i++) {
+                for (int j = i + 1; j < numUsers; j++) {
+                    String username1 = distinctUsernames.get(i);
+                    String username2 = distinctUsernames.get(j);
+        
+                    // Check if there is a connection between username1 and username2
+                    for (int k = 0; k < jsonArray.length(); k++) {
+                        JSONObject connectionObject = jsonArray.getJSONObject(k);
+                        String usernameTo = connectionObject.getString("usernameTo");
+                        String usernameFrom = connectionObject.getString("usernameFrom");
+        
+                        if ((usernameTo.equals(username1) && usernameFrom.equals(username2)) ||
+                                (usernameFrom.equals(username1) && usernameTo.equals(username2))) {
+                            graphView.addEdge(i, j);
+                            break;
+                        }
                     }
                 }
-            }
-            if (len == 4) {
-                graphView.addNode(distinctUsernames.get(0), 500, 525);
-                graphView.addNode(distinctUsernames.get(1), 266, 850);
-                graphView.addNode(distinctUsernames.get(2), 732, 850);
-                graphView.addNode(distinctUsernames.get(3), 500, 1175);
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject connectionObject = jsonArray.getJSONObject(i);
-                    String usernameTo = connectionObject.getString("usernameTo");
-                    String usernameFrom = connectionObject.getString("usernameFrom");
-
-                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(1))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(1))) ||
-                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(2))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(2))) ||
-                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(3))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(3))) ||
-                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(2))) ||
-                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(2))) ||
-                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(3))) ||
-                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(3)) ||
-                            (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(3))) ||
-                            (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(3))))) {
-                        graphView.addEdge(distinctUsernames.indexOf(usernameFrom), distinctUsernames.indexOf(usernameTo));
-                    }
-                }
-            }
-
-            if (len == 5) {
-                graphView.addNode(distinctUsernames.get(0), 820, 620);
-                graphView.addNode(distinctUsernames.get(1), 280, 1175);
-                graphView.addNode(distinctUsernames.get(2), 730, 1175);
-                graphView.addNode(distinctUsernames.get(3), 185, 620);
-                graphView.addNode(distinctUsernames.get(4), 500, 200);
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject connectionObject = jsonArray.getJSONObject(i);
-                    String usernameTo = connectionObject.getString("usernameTo");
-                    String usernameFrom = connectionObject.getString("usernameFrom");
-
-                    if ((usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(1))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(1))) ||
-                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(2))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(2))) ||
-                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(3))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(3))) ||
-                            (usernameTo.equals(distinctUsernames.get(0)) && usernameFrom.equals(distinctUsernames.get(4))) ||
-                            (usernameFrom.equals(distinctUsernames.get(0)) && usernameTo.equals(distinctUsernames.get(4))) ||
-                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(2))) ||
-                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(2))) ||
-                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(3))) ||
-                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(3))) ||
-                            (usernameTo.equals(distinctUsernames.get(1)) && usernameFrom.equals(distinctUsernames.get(4))) ||
-                            (usernameFrom.equals(distinctUsernames.get(1)) && usernameTo.equals(distinctUsernames.get(4))) ||
-                            (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(3))) ||
-                            (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(3))) ||
-                            (usernameTo.equals(distinctUsernames.get(2)) && usernameFrom.equals(distinctUsernames.get(4))) ||
-                            (usernameFrom.equals(distinctUsernames.get(2)) && usernameTo.equals(distinctUsernames.get(4))) ||
-                            (usernameTo.equals(distinctUsernames.get(3)) && usernameFrom.equals(distinctUsernames.get(4))) ||
-                            (usernameFrom.equals(distinctUsernames.get(3)) && usernameTo.equals(distinctUsernames.get(4)))) {
-                        graphView.addEdge(distinctUsernames.indexOf(usernameFrom), distinctUsernames.indexOf(usernameTo));
-                    }
-                }
-
             }
         } catch (Exception e) {
             Log.i("Erro listando conexões", e.toString());
