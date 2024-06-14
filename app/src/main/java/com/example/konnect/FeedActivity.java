@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -100,20 +101,14 @@ public class FeedActivity extends AppCompatActivity {
         graphView = findViewById(R.id.graphView);
 
         String listConnectionsUrl = "http://10.0.2.2:8080/server_war_exploded/api/graph";
-        NetworkUtils.makeGetRequest(listConnectionsUrl, new NetworkUtils.NetworkCallback()) {
-            @Override
-            public void onSuccess(String connectionsResponse) {
-                Log.i("connectionsResponse", connectionsResponse);
-                String listUsersUrl = "http://10.0.2.2:8080/server_war_exploded/api/users";
-                NetworkUtils.makeGetRequest(listUsersUrl, new NetworkUtils.NetworkCallback()) {
-                    @Override
-                    public void onSuccess(String allUsersResponse) {
-                        Log.i("allUsersResponse", allUsersResponse);
-                        ArrayList<String> distinctUsernames = new ArrayList<>();
-                    }
-                }
-            }
-        }
+        String connectionsResponse = makeGetRequest(listConnectionsUrl);
+        Log.i("connectionsResponse", connectionsResponse);
+
+        String listUsersUrl = "http://10.0.2.2:8080/server_war_exploded/api/users";
+        String allUsersResponse = makeGetRequest(listUsersUrl);
+        Log.i("allUsersResponse", allUsersResponse);
+
+        ArrayList<String> distinctUsernames = new ArrayList<>();
 
         try {
             JSONObject jsonObject = new JSONObject(connectionsResponse);
